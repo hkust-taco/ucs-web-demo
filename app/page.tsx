@@ -1,25 +1,25 @@
 "use client";
 
 import { DisplayPanelContent } from "@/components/display";
-import { EditorPanelContent } from "@/components/editor";
+import { useAppendTask } from "@/components/display/results/useTasks";
+// import { EditorPanelContent } from "@/components/editor";
 import { EditorErrorDisplay } from "@/components/editor/error";
-import { SettingsButton } from "@/components/header/settings";
-import { TutorialButton } from "@/components/header/tutorial";
+import { EditorLoading } from "@/components/editor/loading";
+import { Header } from "@/components/header";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import { useCallback, useState } from "react";
 import { Compilation, WebDemo } from "@mlscript/ucs-demo-build";
-import { useAppendTask } from "@/components/display/results/useTasks";
-// import dynamic from "next/dynamic";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import dynamic from "next/dynamic";
+import { useCallback, useState } from "react";
 
-// const EditorPanelContent = dynamic(
-//   import("@/components/editor").then((module) => module.EditorPanelContent),
-//   { ssr: false, loading: () => <div>Loading...</div> }
-// );
+const EditorPanelContent = dynamic(
+  () => import("@/components/editor").then((m) => m.EditorPanelContent),
+  { ssr: false, loading: EditorLoading }
+);
 
 export default function Home() {
   const [compilation, setCompilation] = useState<Compilation | null>(null);
@@ -36,18 +36,7 @@ export default function Home() {
   );
   return (
     <div className="w-full h-full flex flex-col">
-      <header className="top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="px-4 flex h-14 items-center">
-          <h1 className="text-lg font-medium">
-            <span>Ultimate Conditional Syntax</span>{" "}
-            <span className="text-muted-foreground">Web Demo</span>
-          </h1>
-          <nav className="ml-auto flex flex-row gap-3">
-            <SettingsButton />
-            <TutorialButton />
-          </nav>
-        </div>
-      </header>
+      <Header />
       <ResizablePanelGroup className="flex-grow" direction="horizontal">
         <ResizablePanel defaultSize={50} minSize={25}>
           <ErrorBoundary errorComponent={EditorErrorDisplay}>

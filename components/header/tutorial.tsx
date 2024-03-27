@@ -1,8 +1,6 @@
-import { CopyIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -10,9 +8,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { CircleHelpIcon } from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon, CircleHelpIcon } from "lucide-react";
+import ReadMe from "./readme.mdx";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function TutorialButton() {
   return (
@@ -23,35 +21,25 @@ export function TutorialButton() {
           <span>Tutorials</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Share link</DialogTitle>
+      <DialogContent className="sm:max-w-md min-h-[50vh] max-h-[90vh] grid-rows-[auto,minmax(0,1fr),auto]">
+        <DialogHeader className="space-y-0 gap-2">
+          <DialogTitle>Tutorials</DialogTitle>
           <DialogDescription>
-            Anyone who has this link will be able to view this.
+            We should put some tutorials in this dialog.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center space-x-2">
-          <div className="grid flex-1 gap-2">
-            <Label htmlFor="link" className="sr-only">
-              Link
-            </Label>
-            <Input
-              id="link"
-              defaultValue="https://ui.shadcn.com/docs/installation"
-              readOnly
-            />
-          </div>
-          <Button type="submit" size="sm" className="px-3">
-            <span className="sr-only">Copy</span>
-            <CopyIcon className="h-4 w-4" />
-          </Button>
-        </div>
+        <ScrollArea className="prose prose-sm dark:prose-invert">
+          <ReadMe />
+        </ScrollArea>
         <DialogFooter className="sm:justify-start">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
+          <Button type="button" variant="secondary">
+            <ArrowLeftIcon className="w-4 h-4 mr-1 -ml-1" />
+            <span>Previous</span>
+          </Button>
+          <Button type="button" variant="secondary">
+            <span>Next</span>
+            <ArrowRightIcon className="w-4 h-4 ml-1 -mr-1" />
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

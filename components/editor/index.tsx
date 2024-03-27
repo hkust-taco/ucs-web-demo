@@ -1,16 +1,19 @@
-import { defaultKeymap } from "@codemirror/commands";
 import { EditorState } from "@codemirror/state";
-import { EditorView, gutter, keymap, lineNumbers } from "@codemirror/view";
+import { EditorView, keymap } from "@codemirror/view";
 import { useCallback, useEffect, useRef } from "react";
 // import { mlscript } from "@/lib/mlscript";
 import {
   getCurrentTheme,
   useThemeAutoSwitch,
 } from "@/lib/codemirror/useThemeAutoSwitch";
-import { ExampleLoadForm } from "./examples";
-import { ExampleSaveDialog } from "./save";
+import { Example } from "@/lib/examples";
+import { indentWithTab } from "@codemirror/commands";
 import { basicSetup } from "codemirror";
+import { Separator } from "../ui/separator";
+import { ConfirmDialog, useConfirmDialog } from "./ConfirmDialog";
+import { ExampleLoadForm } from "./examples";
 import { RunButton } from "./run";
+import { ExampleSaveDialog } from "./save";
 
 export type EditorPanelContentProps = {
   onRun?: (source: string) => void;
@@ -26,6 +29,7 @@ export function EditorPanelContent({ onRun }: EditorPanelContentProps) {
       doc: code,
       extensions: [
         basicSetup,
+        keymap.of([indentWithTab]),
         // mlscript(), // It's broken for now. :-(
         getCurrentTheme(),
       ],
@@ -40,14 +44,34 @@ export function EditorPanelContent({ onRun }: EditorPanelContentProps) {
   const onRunClick = useCallback(() => {
     onRun?.(editorRef.current?.state.doc.toString() ?? "");
   }, [onRun]);
+  // Confirmation when loading examples
+  const { showDialog, dialogProps } = useConfirmDialog();
+  const onLoadExample = useCallback(
+    (example: Example) => {
+      console.log("here", example);
+      showDialog(() => {
+        console.log("here");
+        editorRef.current?.dispatch({
+          changes: {
+            from: 0,
+            to: editorRef.current.state.doc.length,
+            insert: example.source,
+          },
+        });
+      });
+    },
+    [showDialog]
+  );
   return (
     <div className="p-4 w-full h-full flex flex-col gap-4">
       <header className="w-full flex-shrink-0 flex flex-row gap-3 items-center">
-        <ExampleLoadForm className="flex-grow" onLoad={() => {}} />
+        <ExampleLoadForm className="flex-grow" onLoad={onLoadExample} />
         <ExampleSaveDialog />
+        <Separator orientation="vertical" />
         <RunButton onClick={onRunClick} />
       </header>
       <main className="w-full min-h-0 flex-grow" ref={containerRef}></main>
+      <ConfirmDialog {...dialogProps} />
     </div>
   );
 }

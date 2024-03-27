@@ -3,8 +3,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "next-themes";
-import '@fontsource-variable/jetbrains-mono/wght-italic.css';
-import '@fontsource-variable/jetbrains-mono';
+import "@fontsource-variable/jetbrains-mono/wght-italic.css";
+import "@fontsource-variable/jetbrains-mono";
+import { Provider as JotaiProvider } from "jotai";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,7 +32,9 @@ export default function RootLayout({
         )}
       </head>
       <body className={cn(inter.className, "w-screen h-screen")}>
-        <ThemeProvider attribute="class">{children}</ThemeProvider>
+        <JotaiProvider>
+          <ThemeProvider attribute="class">{children}</ThemeProvider>
+        </JotaiProvider>
       </body>
     </html>
   );
