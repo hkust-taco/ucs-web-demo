@@ -14,6 +14,7 @@ import { ConfirmDialog, useConfirmDialog } from "./ConfirmDialog";
 import { ExampleLoadForm } from "./examples";
 import { RunButton } from "./run";
 import { ExampleSaveDialog } from "./save";
+import { useAppendExample } from "@/lib/examples/hooks";
 
 export type EditorPanelContentProps = {
   onRun?: (source: string) => void;
@@ -48,9 +49,7 @@ export function EditorPanelContent({ onRun }: EditorPanelContentProps) {
   const { showDialog, dialogProps } = useConfirmDialog();
   const onLoadExample = useCallback(
     (example: Example) => {
-      console.log("here", example);
       showDialog(() => {
-        console.log("here");
         editorRef.current?.dispatch({
           changes: {
             from: 0,
@@ -62,11 +61,21 @@ export function EditorPanelContent({ onRun }: EditorPanelContentProps) {
     },
     [showDialog]
   );
+  const appendExample = useAppendExample();
   return (
     <div className="p-4 w-full h-full flex flex-col gap-4">
       <header className="w-full flex-shrink-0 flex flex-row gap-3 items-center">
         <ExampleLoadForm className="flex-grow" onLoad={onLoadExample} />
-        <ExampleSaveDialog />
+        <ExampleSaveDialog
+          onSubmit={(data) => {
+            appendExample({
+              group: "user",
+              name: data.name,
+              source: editorRef.current?.state.doc.toString() ?? "",
+              builtin: false,
+            });
+          }}
+        />
         <Separator orientation="vertical" />
         <RunButton onClick={onRunClick} />
       </header>

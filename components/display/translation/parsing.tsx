@@ -8,7 +8,7 @@ export function ParsingContent() {
         <h3 className="text-lg font-bold">Stage 0: Parsing</h3>
       </CardHeader>
       <CardContent>
-        <div ></div>
+        
       </CardContent>
     </Card>
   );
