@@ -23,6 +23,7 @@ export type EditorPanelContentProps = {
 export function EditorPanelContent({ onRun }: EditorPanelContentProps) {
   const editorRef = useRef<EditorView | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  // const editorGenerationRef = useRef<number | null>(null);
   useEffect(() => {
     if (containerRef.current === null) return;
     if (editorRef.current !== null) return;
@@ -49,17 +50,27 @@ export function EditorPanelContent({ onRun }: EditorPanelContentProps) {
   const { showDialog, dialogProps } = useConfirmDialog();
   const onLoadExample = useCallback(
     (example: Example) => {
-      showDialog(() => {
-        editorRef.current?.dispatch({
-          changes: {
-            from: 0,
-            to: editorRef.current.state.doc.length,
-            insert: example.source,
-          },
-        });
+      if (editorRef.current === null) return;
+      // const isClean = editorGenerationRef.current === null || editorRef.current.state.;
+      // showDialog(() => {
+      //   editorRef.current?.dispatch({
+      //     changes: {
+      //       from: 0,
+      //       to: editorRef.current.state.doc.length,
+      //       insert: example.source,
+      //     },
+      //   });
+      // });
+      editorRef.current?.dispatch({
+        changes: {
+          from: 0,
+          to: editorRef.current.state.doc.length,
+          insert: example.source,
+        },
       });
+      onRun?.(example.source);
     },
-    [showDialog]
+    [showDialog, onRun]
   );
   const appendExample = useAppendExample();
   return (

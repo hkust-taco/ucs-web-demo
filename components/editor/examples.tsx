@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useState } from "react";
 
 import {
   Select,
@@ -9,16 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useLocalStorage } from "usehooks-ts";
-import { Example, examples as builtinExamples } from "@/lib/examples";
-import { Control, Controller, useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "@/lib/utils";
-import { FileInputIcon } from "lucide-react";
+import { Example } from "@/lib/examples";
 import { useAllExamples, useExampleGroups } from "@/lib/examples/hooks";
+import { cn } from "@/lib/utils";
+import { Control } from "react-hook-form";
+import { z } from "zod";
+import { Label } from "../ui/label";
 
 const ExampleFormSchema = z.object({
   example: z.string().min(1, "Name is required"),
@@ -32,19 +28,16 @@ export type ExampleLoadFormProps = {
 };
 
 export function ExampleLoadForm({ className, onLoad }: ExampleLoadFormProps) {
-  const { control, handleSubmit } = useForm<ExampleFormData>({
-    resolver: zodResolver(ExampleFormSchema),
-  });
+  const [selectedExample, setSelectedExample] = useState<string | undefined>();
   const allExamples = useAllExamples();
   const exampleGroups = useExampleGroups();
-  const onSubmit = useCallback(
-    (data: ExampleFormData) => {
-      const example = allExamples.find(
-        (example) => example.name === data.example
-      );
+  const onChange = useCallback(
+    (exampleId: string) => {
+      setSelectedExample(exampleId);
+      const example = allExamples.find((example) => example.name === exampleId);
       if (example === undefined) {
         console.error(
-          `Example "${data.example}" not found but it should appear in the list.`
+          `Example "${exampleId}" not found but it should appear in the list.`
         );
       } else {
         onLoad?.(example);
@@ -53,43 +46,30 @@ export function ExampleLoadForm({ className, onLoad }: ExampleLoadFormProps) {
     [allExamples, onLoad]
   );
   return (
-    <form
-      className={cn(className, "flex flex-row gap-3 items-center")}
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <div className={cn(className, "flex flex-row gap-3 items-center")}>
       <Label className="flex-shrink-0" htmlFor="example">
         Example
       </Label>
-      <Controller
-        control={control}
-        name="example"
-        render={({ field }) => (
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
-            <SelectTrigger className="flex-grow">
-              <SelectValue placeholder="Select an example" />
-            </SelectTrigger>
-            <SelectContent>
-              {exampleGroups.map(([group, examples]) => (
-                <SelectGroup key={group}>
-                  <SelectLabel className="text-muted-foreground">
-                    {group}
-                  </SelectLabel>
-                  {examples.map((example) => (
-                    <SelectItem key={example.name} value={example.name}>
-                      {example.name}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
+      <Select onValueChange={onChange} value={selectedExample}>
+        <SelectTrigger className="flex-grow">
+          <SelectValue placeholder="Select an example" />
+        </SelectTrigger>
+        <SelectContent>
+          {exampleGroups.map(([group, examples]) => (
+            <SelectGroup key={group}>
+              <SelectLabel className="text-muted-foreground">
+                {group}
+              </SelectLabel>
+              {examples.map((example) => (
+                <SelectItem key={example.name} value={example.name}>
+                  {example.name}
+                </SelectItem>
               ))}
-            </SelectContent>
-          </Select>
-        )}
-      />
-      <Button className="flex-shrink-0" type="submit" variant="outline">
-        <FileInputIcon className="w-4 h-4 mr-1" />
-        <span>Load</span>
-      </Button>
-    </form>
+            </SelectGroup>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 }
 
