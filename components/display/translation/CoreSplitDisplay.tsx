@@ -1,7 +1,9 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { splitLength } from "@/lib/splitUtils";
 import { CoreBranch, CorePattern, CoreSplit } from "@mlscript/ucs-demo-build";
 import { EllipsisIcon } from "lucide-react";
+import pluralize from "pluralize";
 import { ReactNode, useMemo, useState } from "react";
+import { StageSection } from "./StageSection";
 import {
   Connective,
   EmptySplitNode,
@@ -10,8 +12,6 @@ import {
   SplitOpeningNode,
   TermNode,
 } from "./nodes";
-import { splitLength } from "@/lib/splitUtils";
-import pluralize from "pluralize";
 
 export type CoreSplitDisplayProps = {
   caption: ReactNode;
@@ -23,17 +23,12 @@ export function CoreSplitDisplay({
   topLevelSplit,
 }: CoreSplitDisplayProps) {
   return (
-    <Card>
-      <CardHeader>
-        <h3 className="text-lg font-bold">{caption}</h3>
-      </CardHeader>
-      <CardContent>
-        <SplitNode
-          prefix={<span className="font-mono font-medium mr-2">if</span>}
-          split={topLevelSplit}
-        />
-      </CardContent>
-    </Card>
+    <StageSection caption={caption}>
+      <SplitNode
+        prefix={<span className="font-mono font-medium mr-2">if</span>}
+        split={topLevelSplit}
+      />
+    </StageSection>
   );
 }
 

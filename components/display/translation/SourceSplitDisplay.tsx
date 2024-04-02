@@ -14,6 +14,7 @@ import {
   SplitOpeningNode,
   TermNode,
 } from "./nodes";
+import { StageSection } from "./StageSection";
 
 export type ParsingContentProps = {
   caption: ReactNode;
@@ -25,17 +26,12 @@ export function SourceSplitDisplay({
   topLevelSplit,
 }: ParsingContentProps) {
   return (
-    <Card>
-      <CardHeader>
-        <h3 className="text-lg font-bold">{caption}</h3>
-      </CardHeader>
-      <CardContent>
-        <SplitNode
-          prefix={<span className="font-mono font-medium mr-2">if</span>}
-          split={topLevelSplit}
-        />
-      </CardContent>
-    </Card>
+    <StageSection caption={caption}>
+      <SplitNode
+        prefix={<span className="font-mono font-medium mr-2">if</span>}
+        split={topLevelSplit}
+      />
+    </StageSection>
   );
 }
 

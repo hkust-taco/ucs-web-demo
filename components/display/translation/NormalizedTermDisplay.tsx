@@ -1,26 +1,20 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
-  CoreBranch,
-  CorePattern,
-  CoreSplit,
-  MLscriptTerm,
   NormalizedTerm,
   NormalizedTermCase,
   NormalizedTermCasePattern,
 } from "@mlscript/ucs-demo-build";
 import { EllipsisIcon } from "lucide-react";
-import { Fragment, ReactNode, useMemo, useState } from "react";
+import pluralize from "pluralize";
+import { ReactNode, useMemo, useState } from "react";
+import { StageSection } from "./StageSection";
 import {
   Connective,
   EmptySplitNode,
   IndentedBlock,
-  SingleElseSplitNode,
   SplitClosingNode,
   SplitOpeningNode,
   TermNode,
 } from "./nodes";
-import { splitLength } from "@/lib/splitUtils";
-import pluralize from "pluralize";
 
 export type NormalizedTermDisplayProps = {
   caption: ReactNode;
@@ -32,14 +26,9 @@ export function NormalizedTermDisplay({
   topLevelTerm,
 }: NormalizedTermDisplayProps) {
   return (
-    <Card>
-      <CardHeader>
-        <h3 className="text-lg font-bold">{caption}</h3>
-      </CardHeader>
-      <CardContent>
-        <NormalizedTermNode term={topLevelTerm} />
-      </CardContent>
-    </Card>
+    <StageSection caption={caption}>
+      <NormalizedTermNode term={topLevelTerm} />
+    </StageSection>
   );
 }
 

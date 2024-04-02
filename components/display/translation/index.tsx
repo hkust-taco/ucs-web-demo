@@ -16,7 +16,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CoreSplitDisplay } from "./CoreSplitDisplay";
 import { NormalizedTermDisplay } from "./NormalizedTermDisplay";
 import { SourceSplitDisplay } from "./SourceSplitDisplay";
-import { StageDisplay } from "./StageDisplay";
+import { SourceCodeDisplay } from "./SourceCodeDisplay";
 
 export type TranslationContentProps = {
   sourceCode: string | null;
@@ -54,8 +54,14 @@ export function TranslationContent({
         normalized: translateResult.normalized,
         postProcessed: translateResult.postProcessed,
       })) ?? []
-    );
-  }, [source, compilation?.translation]);
+    ).sort((a, b) => {
+      if (a.location === undefined) return -1;
+      if (b.location === undefined) return 1;
+      return a.location[0][0] === b.location[0][0]
+        ? a.location[0][1] - b.location[0][1]
+        : a.location[0][0] - b.location[0][0];
+    });
+  }, [sourceCode, source, compilation?.translation]);
   useEffect(() => {
     setSelectedTranslationResultId(
       translationResultList.length === 0
@@ -71,8 +77,8 @@ export function TranslationContent({
     );
   }, [selectedTranslationResultId, translationResultList]);
   return (
-    <ScrollArea className="w-full h-full">
-      <div className="flex flex-col gap-4 px-1">
+    <div className="w-full h-full flex flex-col gap-4">
+      <header className="flex-shrink-0 flex flex-col gap-4">
         {translationResultList.length === 0 ? (
           <Alert>
             <InfoIcon className="h-4 w-4" />
@@ -121,32 +127,36 @@ export function TranslationContent({
             </SelectContent>
           </Select>
         </div>
-        {selectedTranslationResult === undefined ? undefined : (
-          <>
-            <StageDisplay
-              caption="Source Code"
-              lines={selectedTranslationResult.source?.split("\n") ?? []}
-            />
-            <SourceSplitDisplay
-              caption="Stage 0: Parsing"
-              topLevelSplit={selectedTranslationResult.transformed}
-            />
-            <CoreSplitDisplay
-              caption="Stage 1: Desugaring"
-              topLevelSplit={selectedTranslationResult.desugared}
-            />
-            <NormalizedTermDisplay
-              caption="Stage 2: Normalization"
-              topLevelTerm={selectedTranslationResult.normalized}
-            />
-            <NormalizedTermDisplay
-              caption="Stage 3: Post-processing"
-              topLevelTerm={selectedTranslationResult.postProcessed}
-            />
-          </>
-        )}
-      </div>
-    </ScrollArea>
+      </header>
+      <ScrollArea className="flex-1 min-h-0">
+        <div className="flex flex-col gap-4 px-1">
+          {selectedTranslationResult === undefined ? undefined : (
+            <>
+              <SourceCodeDisplay
+                caption="Source Code"
+                lines={selectedTranslationResult.source?.split("\n") ?? []}
+              />
+              <SourceSplitDisplay
+                caption="Stage 0: Parsing"
+                topLevelSplit={selectedTranslationResult.transformed}
+              />
+              <CoreSplitDisplay
+                caption="Stage 1: Desugaring"
+                topLevelSplit={selectedTranslationResult.desugared}
+              />
+              <NormalizedTermDisplay
+                caption="Stage 2: Normalization"
+                topLevelTerm={selectedTranslationResult.normalized}
+              />
+              <NormalizedTermDisplay
+                caption="Stage 3: Post-processing"
+                topLevelTerm={selectedTranslationResult.postProcessed}
+              />
+            </>
+          )}
+        </div>
+      </ScrollArea>
+    </div>
   );
 }
 

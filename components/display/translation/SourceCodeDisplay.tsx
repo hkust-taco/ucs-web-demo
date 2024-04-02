@@ -6,13 +6,14 @@ import {
 import { EditorState } from "@codemirror/state";
 import { EditorView, basicSetup } from "codemirror";
 import { ReactNode, useEffect, useRef } from "react";
+import { StageSection } from "./StageSection";
 
-export type StageDisplayProps = {
+export type SourceCodeDisplayProps = {
   caption: ReactNode;
   lines: string[];
 };
 
-export function StageDisplay({ caption, lines }: StageDisplayProps) {
+export function SourceCodeDisplay({ caption, lines }: SourceCodeDisplayProps) {
   const editorRef = useRef<EditorView | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -44,13 +45,8 @@ export function StageDisplay({ caption, lines }: StageDisplayProps) {
     });
   }, [lines]);
   return (
-    <Card>
-      <CardHeader>
-        <h3 className="text-lg font-bold">{caption}</h3>
-      </CardHeader>
-      <CardContent>
-        <main className="w-full min-h-0 flex-grow" ref={containerRef}></main>
-      </CardContent>
-    </Card>
+    <StageSection caption={caption} noOutline>
+      <main className="w-full min-h-0 flex-grow" ref={containerRef}></main>
+    </StageSection>
   );
 }
