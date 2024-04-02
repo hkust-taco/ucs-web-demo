@@ -22,12 +22,14 @@ const EditorPanelContent = dynamic(
 );
 
 export default function Home() {
+  const [lastSource, setLastSource] = useState<string | null>(null);
   const [compilation, setCompilation] = useState<Compilation | null>(null);
   const appendTask = useAppendTask();
   const onRun = useCallback(
     (source: string) => {
       const compilation = WebDemo.compile(source);
       setCompilation(compilation);
+      setLastSource(source);
       if (typeof compilation.target?.content === "string") {
         appendTask(compilation.target?.content);
       }
@@ -45,7 +47,7 @@ export default function Home() {
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={50} minSize={25}>
-          <DisplayPanelContent compilation={compilation} />
+          <DisplayPanelContent source={lastSource} compilation={compilation} />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

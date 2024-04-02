@@ -6,7 +6,7 @@ export function CoverageCheckingContent() {
       <CardHeader>
         <h3 className="text-lg font-bold">Stage 4: Coverage Checking</h3>
       </CardHeader>
-      <CardContent>We should show parsing results here.</CardContent>
+      <CardContent>We should show coverage checking results here.</CardContent>
     </Card>
   );
 }
