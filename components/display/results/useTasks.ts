@@ -47,7 +47,12 @@ export function useTasks(): UseTasksResult {
       setTasks((prev) =>
         prev.map((task) =>
           task.id === result.id
-            ? { ...task, evaluatedAt: new Date(), variables }
+            ? {
+                ...task,
+                evaluatedAt: new Date(),
+                variables,
+                error: result.error,
+              }
             : task
         )
       );

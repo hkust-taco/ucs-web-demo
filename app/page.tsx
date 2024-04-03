@@ -11,7 +11,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { Compilation, WebDemo } from "@mlscript/ucs-demo-build";
+import { Compilation, compile } from "@mlscript/ucs-demo-build";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import dynamic from "next/dynamic";
 import { useCallback, useState } from "react";
@@ -27,7 +27,7 @@ export default function Home() {
   const appendTask = useAppendTask();
   const onRun = useCallback(
     (source: string) => {
-      const compilation = WebDemo.compile(source);
+      const compilation = compile(source);
       setCompilation(compilation);
       setLastSource(source);
       if (typeof compilation.target?.content === "string") {

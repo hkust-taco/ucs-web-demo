@@ -39,7 +39,7 @@ export function DisplayPanelContent({
         <TranslationContent sourceCode={source} compilation={compilation} />
       </TabsContent>
       <TabsContent className="mt-0 flex-grow min-h-0" value="types">
-        <TypeInferenceContent types={compilation?.types.content ?? null} />
+        <TypeInferenceContent types={compilation?.types ?? null} />
       </TabsContent>
       <TabsContent className="mt-0 flex-grow min-h-0" value="results">
         <EvaluationResult />

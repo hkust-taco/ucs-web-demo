@@ -5,7 +5,8 @@ import { VariableTable } from "./VariableTable";
 import type { TaskResult } from "./run.worker";
 import { useTasks } from "./useTasks";
 import { TaskSelect } from "./TaskSelect";
-import { ListVideoIcon } from "lucide-react";
+import { ListVideoIcon, OctagonXIcon } from "lucide-react";
+import { SectionCaption } from "../SectionCaption";
 
 export type EvaluationResultProps = {};
 
@@ -72,26 +73,28 @@ export function EvaluationResult({}: EvaluationResultProps) {
       </header>
 
       <section className="flex flex-col gap-1.5 w-full overflow-hidden">
-        <SectionCaption>Generated Code</SectionCaption>
+        <SectionCaption>Generated JavaScript Code</SectionCaption>
         <main className="min-h-0 flex-1 w-full">
           <GeneratedCode code={latestTask?.code} />
         </main>
       </section>
 
       <section className="flex flex-col gap-1.5 w-full overflow-hidden">
-        <SectionCaption>Evaluated Variables</SectionCaption>
+        <SectionCaption>Code Execution Result</SectionCaption>
         <main className="min-h-0 flex-1 w-full">
-          <VariableTable variables={latestTask?.variables ?? []} />
+          {latestTask?.error ? (
+            <div className="flex flex-col border border-rose-900 rounded-md overflow-hidden">
+              <header className="px-2  py-1 bg-rose-900 text-primary flex flex-row items-center">
+                <OctagonXIcon className="w-4 h-4 mr-1" />
+                <span className="font-semibold uppercase">Error</span>
+              </header>
+              <div className="p-2 text-primary">{latestTask.error}</div>
+            </div>
+          ) : (
+            <VariableTable variables={latestTask?.variables ?? []} />
+          )}
         </main>
       </section>
     </div>
-  );
-}
-
-function SectionCaption({ children }: { children: React.ReactNode }) {
-  return (
-    <h3 className="text-sm font-bold text-muted-foreground uppercase select-none">
-      {children}
-    </h3>
   );
 }

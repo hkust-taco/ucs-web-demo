@@ -21,7 +21,12 @@ export function GeneratedCode({ code }: GeneratedCodeProps) {
     if (editorRef.current !== null) return;
     const initialState = EditorState.create({
       doc,
-      extensions: [basicSetup, javascript(), getCurrentTheme()],
+      extensions: [
+        basicSetup,
+        javascript(),
+        getCurrentTheme(),
+        EditorState.readOnly.of(true),
+      ],
     });
     const editor = new EditorView({
       state: initialState,

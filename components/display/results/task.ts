@@ -7,6 +7,7 @@ export type Task = {
   evaluatedAt: Date | null;
   code: string;
   variables: EvaluatedVariable[];
+  error?: string;
 };
 
 export function freshTask(code: string): Task {
