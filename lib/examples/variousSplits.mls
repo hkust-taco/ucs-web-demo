@@ -1,0 +1,15 @@
+// Section 1. Splitting conditional prefixes in arbitrary places.
+
+fun f(x) =
+  if x
+    == 0 then "null"
+    < 0  then "negative"
+    % 2 ==
+      0 then "even"
+      _ then "odd"
+
+f(0)
+f(-100)
+f(2)
+f(4)
+f(7)

@@ -1,4 +1,4 @@
-import { SettingsButton } from "../settings";
+// import { SettingsButton } from "../settings";
 import { TutorialButton } from "./tutorial";
 
 export function Header() {
@@ -10,7 +10,7 @@ export function Header() {
           <span className="text-muted-foreground">Web Demo</span>
         </h1>
         <nav className="ml-auto flex flex-row gap-3">
-          <SettingsButton />
+          {/* <SettingsButton /> */}
           <TutorialButton />
         </nav>
       </div>

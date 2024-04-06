@@ -1,20 +1,21 @@
-Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+A web demonstration of the Ultimate Conditional Syntax (UCS) is available as supplementary material attached with this submission. The web demo can run on Chrome, Edge, and FireFox released in the last two years. We encourage you to run the web demo yourself to try out UCS.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+## Usage
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+To run the web demo, follow the steps below.
+
+1. First, unzip the compressed file into a certain directory.
+2. Then use the command line to `cd` into the directory.
+3. Run `python3 -m http.server` (or `python -m SimpleHTTPServer` if Python 3 is not available), and then you can access the web demo at the provided address (usually http://localhost:8000/). 
+
+The demo does not perform any network requests and can also be run inside an isolated virtual machine without the Internet access. The reason for setting up a local HTTP server is because modern browsers have restricted the ability to directly load JavaScript from the disk for security reasons.
+
+## Guide
+
+You can input the source code into the panel on the left. We also provide some existing examples that can be selected from the dropdown menu above the editor. After editing, click the "Compile & Run" button to run the code. The right panel has three tabs, showing the following things respectively:
+
+1. the results of each stage of UCS translation,
+2. the type inference results of the whole program, and
+3. the running results of the generated code.
+
+If there are multiple UCS expressions in the program, you can select the UCS expression to be displayed from the dropdown select at the top right side.

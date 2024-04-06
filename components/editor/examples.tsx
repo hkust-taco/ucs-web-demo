@@ -48,7 +48,7 @@ export function ExampleLoadForm({ className, onLoad }: ExampleLoadFormProps) {
   return (
     <div className={cn(className, "flex flex-row gap-3 items-center")}>
       <Label className="flex-shrink-0" htmlFor="example">
-        Example
+        Select an example
       </Label>
       <Select onValueChange={onChange} value={selectedExample}>
         <SelectTrigger className="flex-grow">

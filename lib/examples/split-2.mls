@@ -1,0 +1,16 @@
+// Note: the definition of `foo` is lacked.
+// But we can still see the translation stages.
+
+if foo(u, v, w) is
+  Some(x) and x is
+    Left(_)  then "left-defined"
+    Right(_) then "right-defined"
+  None       then "undefined"
+
+abstract class Option[A]: Some[A] | None
+class Some[A](value: A) extends Option[A]
+module None extends Option
+
+abstract class Either[out A, out B]: Left[A] | Right[B]
+class Left[A](leftValue: A) extends Either[A, nothing]
+class Right[B](rightValue: B) extends Either[nothing, B]

@@ -16,6 +16,16 @@ export type TaskSelectProps = {
 
 export function TaskSelect({ selectedTask, onSelectTask }: TaskSelectProps) {
   const tasks = useTasksValue();
+  const latestTask = useMemo(() => {
+    if (tasks.length === 0) return null;
+    let latestTask = tasks[0];
+    for (const task of tasks) {
+      if (task.createdAt > latestTask.createdAt) {
+        latestTask = task;
+      }
+    }
+    return latestTask;
+  }, [tasks]);
   const tasksWithName = useMemo(
     () =>
       tasks.map(
@@ -23,13 +33,18 @@ export function TaskSelect({ selectedTask, onSelectTask }: TaskSelectProps) {
           [
             task,
             <>
-              Compiled at <EmphasizedTime time={task.startedAt} />,{" "}
-              {task.evaluatedAt === null ? (
-                "never evaluated"
+              Compiled at <EmphasizedTime time={task.createdAt} />,
+              {task.type === "success" ? (
+                task.evaluatedAt === null ? (
+                  " never evaluated"
+                ) : (
+                  <>
+                    {" "}
+                    evaluated at <EmphasizedTime time={task.evaluatedAt} />
+                  </>
+                )
               ) : (
-                <>
-                  evaluated at <EmphasizedTime time={task.evaluatedAt} />
-                </>
+                <> code generation failed</>
               )}
               .
             </>,
@@ -48,8 +63,13 @@ export function TaskSelect({ selectedTask, onSelectTask }: TaskSelectProps) {
       </SelectTrigger>
       <SelectContent>
         {tasksWithName.map(([task, name]) => (
-          <SelectItem key={task.id} value={task.id}>
-            {name}
+          <SelectItem key={task.id} value={task.id} className="select-none">
+            {task === latestTask ? (
+              <span>
+                <strong>Latest</strong> —{" "}
+              </span>
+            ) : null}
+            <span>{name}</span>
           </SelectItem>
         ))}
         {tasksWithName.length === 0 ? (

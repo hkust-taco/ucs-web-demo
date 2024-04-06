@@ -27,19 +27,27 @@ export function NormalizedTermDisplay({
 }: NormalizedTermDisplayProps) {
   return (
     <StageSection caption={caption}>
-      <NormalizedTermNode term={topLevelTerm} />
+      <NormalizedTermNode term={topLevelTerm} topLevel />
     </StageSection>
   );
 }
 
-function NormalizedTermNode({ term }: { term: NormalizedTerm }) {
+type NormalizedTermNodeProps = {
+  term: NormalizedTerm;
+  topLevel?: boolean;
+};
+
+function NormalizedTermNode({
+  term,
+  topLevel = false,
+}: NormalizedTermNodeProps) {
   const elements: ReactNode[] = [];
   let current = term as NormalizedTerm;
   while (current.type === "Let") {
     elements.push(
       <div key={elements.length}>
         <span className="font-mono font-bold">let</span>
-        <span className="mx-2 font-mono underline decoration-muted-foreground underline-offset-4">
+        <span className="mx-2 font-mono text-muted-foreground underline decoration-muted-foreground underline-offset-4">
           {current.name}
         </span>
         <span className="font-mono font-bold">= </span>
@@ -66,7 +74,7 @@ function NormalizedTermNode({ term }: { term: NormalizedTerm }) {
   } else {
     elements.push(<TermNode term={current} />);
   }
-  return elements.length === 1 ? (
+  return elements.length === 1 && (term.type === "Term" || topLevel) ? (
     elements[0]
   ) : (
     <IndentedBlock>{elements}</IndentedBlock>

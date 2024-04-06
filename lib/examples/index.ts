@@ -5,6 +5,8 @@ import mapPartition from "./mapPartition.mls";
 import binarySearchTree from "./BinarySearchTree.mls";
 import calculator from "./Calculator.mls";
 import lispInterpreter from "./LispInterpreter.mls";
+import variousSplits from "./variousSplits.mls";
+import split2 from "./split-2.mls";
 
 export const ExampleSchema = z.object({
   group: z.string().default("user"),
@@ -16,6 +18,18 @@ export const ExampleSchema = z.object({
 export type Example = z.output<typeof ExampleSchema>;
 
 export const examples: Example[] = [
+  {
+    group: "Section 1",
+    name: "conditional splits (1)",
+    source: variousSplits,
+    builtin: true,
+  },
+  {
+    group: "Section 1",
+    name: "conditional splits (2)",
+    source: split2,
+    builtin: true,
+  },
   {
     group: "General",
     name: "guards",

@@ -1,9 +1,7 @@
 fun (|>) pipe(x, f) = f(x)
-fun (~~>) toBe(x, y) = if x === y then () else error
 fun (<?) min(x, y) = if x < y then x else y
 fun (>?) max(x, y) = if x > y then x else y
 fun abs(x) = if x < 0 then -x else x
-
 
 abstract class Option[T]: (Some[T] | None)
 class Some[T](val value: T) extends Option[T]
@@ -83,9 +81,9 @@ fun contains(t, v) = if t is
   Empty then false
 
 // Writing tests like this is very interesting.
-contains(Empty, 0) ~~> false
-contains(Node(0, Empty, Empty), 0) ~~> true
-contains(Node(1, Empty, Empty), 0) ~~> false
+contains(Empty, 0)
+contains(Node(0, Empty, Empty), 0)
+contains(Node(1, Empty, Empty), 0)
 
 fun minValue(t) = if t is
   Empty then None
@@ -258,10 +256,10 @@ fun size(t) =
     Node(_, l, r) then 1 + size(l) + size(r)
     Empty then 0
 
-size(Empty) ~~> 0
-size(Node(0, Empty, Empty)) ~~> 1
-size(example1) ~~> 4
-size(example2) ~~> 7
+size(Empty)
+size(Node(0, Empty, Empty))
+size(example1)
+size(example2)
 
 fun inverse(t) =
   if t is
@@ -278,10 +276,10 @@ fun height(t) =
     Node(_, l, r) then 1 + max(height(l), height(r))
     Empty then 0
 
-height(Empty) ~~> 0
-height(Node(0, Empty, Empty)) ~~> 1
-height(example1) ~~> 3
-height(example2) ~~> 5
+height(Empty)
+height(Node(0, Empty, Empty))
+height(example1)
+height(example2)
 
 fun isBalanced(t) =
   if t is
@@ -290,11 +288,11 @@ fun isBalanced(t) =
       // The precedence of `<=` seems to be broken.
       (abs(hl - hr) <= 1) && isBalanced(l) && isBalanced(r)
 
-isBalanced(Empty) ~~> true
-isBalanced(Node(0, Empty, Empty)) ~~> true
-isBalanced(example1) ~~> false
-isBalanced(example2) ~~> false
+isBalanced(Empty)
+isBalanced(Node(0, Empty, Empty))
+isBalanced(example1)
+isBalanced(example2)
 
-isBalanced(Node(1, single(-1), single(3))) ~~> true
-isBalanced(Node(1, single(-1), Node(3, single(2), Empty))) ~~> true
-isBalanced(Node(1, single(-1), Node(3, Empty, single(4)))) ~~> true
+isBalanced(Node(1, single(-1), single(3)))
+isBalanced(Node(1, single(-1), Node(3, single(2), Empty)))
+isBalanced(Node(1, single(-1), Node(3, Empty, single(4))))

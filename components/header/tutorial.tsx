@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
+  // DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -21,25 +21,25 @@ export function TutorialButton() {
           <span>Tutorials</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md min-h-[50vh] max-h-[90vh] grid-rows-[auto,minmax(0,1fr),auto]">
+      <DialogContent className="sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl min-h-[50vh] max-h-[90vh] grid-rows-[auto,minmax(0,1fr),auto]">
         <DialogHeader className="space-y-0 gap-2">
           <DialogTitle>Tutorials</DialogTitle>
-          <DialogDescription>
+          {/* <DialogDescription>
             We should put some tutorials in this dialog.
-          </DialogDescription>
+          </DialogDescription> */}
         </DialogHeader>
-        <ScrollArea className="prose prose-sm dark:prose-invert">
+        <ScrollArea className="prose dark:prose-invert">
           <ReadMe />
         </ScrollArea>
         <DialogFooter className="sm:justify-start">
-          <Button type="button" variant="secondary">
+          {/* <Button type="button" variant="secondary">
             <ArrowLeftIcon className="w-4 h-4 mr-1 -ml-1" />
             <span>Previous</span>
           </Button>
           <Button type="button" variant="secondary">
             <span>Next</span>
             <ArrowRightIcon className="w-4 h-4 ml-1 -mr-1" />
-          </Button>
+          </Button> */}
         </DialogFooter>
       </DialogContent>
     </Dialog>

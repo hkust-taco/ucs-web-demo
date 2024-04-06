@@ -1,8 +1,8 @@
 "use client";
 
 import { DisplayPanelContent } from "@/components/display";
+import { freshFailureTask, freshSuccessTask } from "@/components/display/results/task";
 import { useAppendTask } from "@/components/display/results/useTasks";
-// import { EditorPanelContent } from "@/components/editor";
 import { EditorErrorDisplay } from "@/components/editor/error";
 import { EditorLoading } from "@/components/editor/loading";
 import { Header } from "@/components/header";
@@ -31,7 +31,9 @@ export default function Home() {
       setCompilation(compilation);
       setLastSource(source);
       if (typeof compilation.target?.content === "string") {
-        appendTask(compilation.target?.content);
+        appendTask(freshSuccessTask(compilation.target?.content));
+      } else {
+        appendTask(freshFailureTask(compilation.target?.reports ?? []));
       }
     },
     [appendTask]

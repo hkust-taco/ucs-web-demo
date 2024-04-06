@@ -75,11 +75,11 @@
 }
 
 .cm-editor .cm-content {
-  @apply font-code-editor text-sm;
+  @apply font-code-editor;
 }
 
 .cm-editor .cm-lineNumbers {
-  @apply font-code-editor text-sm;
+  @apply font-code-editor;
 }
 
 .cm-editor .cm-gutters {
@@ -104,6 +104,10 @@
   .header {
     @apply top-0 z-50 w-full border-b border-border bg-background/95
       backdrop-blur supports-[backdrop-filter]:bg-background/60;
+  }
+
+  .split-type-badge {
+    @apply px-1.5 py-px font-sans text-muted-foreground;
   }
 }
 

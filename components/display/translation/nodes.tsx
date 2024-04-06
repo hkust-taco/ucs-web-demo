@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -37,11 +38,13 @@ export function Connective({ children }: { children: ReactNode }) {
 
 export type SplitBraceProps = {
   open?: boolean;
+  tag?: string;
   onOpenChange?: (value: boolean) => void;
 };
 
 export function SplitOpeningNode({
   open = true,
+  tag,
   onOpenChange,
 }: SplitBraceProps) {
   const onClick = useCallback(
@@ -50,11 +53,19 @@ export function SplitOpeningNode({
   );
   return (
     <button
-      className="font-mono text-muted-foreground -mx-0.5 px-0.5 py-px hover:bg-black/10 rounded-sm"
+      className="relative font-mono text-muted-foreground -mx-0.5 px-0.5 py-px hover:bg-black/10 rounded-sm cursor-pointer"
       type="button"
       onClick={onClick}
     >
       {"{"}
+      {typeof tag === "string" && open ? (
+        <Badge
+          className="absolute top-1/2 left-full translate-x-1 -translate-y-1/2 split-type-badge"
+          variant="outline"
+        >
+          {tag}
+        </Badge>
+      ) : null}
     </button>
   );
 }

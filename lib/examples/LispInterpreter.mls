@@ -250,17 +250,9 @@ let intEnv3 = extend(intEnv2, ["three", 3])
 // Make a tuple to save some lines.
 [intEnv1("one"), intEnv2("one"), intEnv3("one"), intEnv2("two"), intEnv3("two"), intEnv3("three")]
 
-:re
-intEnv1("two")
-intEnv2("three")
-intEnv3("bruh")
-
 let intEnv6 = intEnv3 ++: (["four", 4] :: ["five", 5] :: ["six", 6] :: Nil)
 
 [intEnv6("one"), intEnv6("two"), intEnv6("three"), intEnv6("four"), intEnv6("five"), intEnv6("six")]
-
-:re
-intEnv6("seven")
 
 fun builtinEq(args: List[Data]): Data = if args is
   Cons(x, Cons(y, Nil)) and

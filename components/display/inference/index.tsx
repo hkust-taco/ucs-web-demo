@@ -8,10 +8,7 @@ import { StageResult } from "@mlscript/ucs-demo-build";
 import { basicSetup } from "codemirror";
 import { useEffect, useRef } from "react";
 import { SectionCaption } from "../SectionCaption";
-import { ReportDisplay } from "./ReportDisplay";
-import { ThumbsUpIcon } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ReportsSection } from "./ReportsSection";
 
 export type TypeInferenceContentProps = {
   types: StageResult<string> | null;
@@ -61,30 +58,23 @@ export function TypeInferenceContent({ types }: TypeInferenceContentProps) {
     >
       <section className="flex flex-col gap-1.5 w-full overflow-hidden">
         <SectionCaption>Inferred Types</SectionCaption>
+        <p className="flex-shrink-0 text-sm text-muted-foreground mb-1.5">
+          The type inference and check results of the code on the left side will
+          be displayed here.
+        </p>
         <main className="min-h-0 flex-1 w-full">
           <div className="w-full h-full" ref={containerRef}></div>
         </main>
       </section>
-      <section className="flex flex-col gap-1.5 w-full overflow-hidden">
-        <SectionCaption>Type Errors and Warnings</SectionCaption>
-        <main className="min-h-0 flex-1 w-full">
-          {reports.length === 0 ? (
-            <Alert>
-              <ThumbsUpIcon className="w-4 h-4" />
-              <AlertTitle>No errors and warnings</AlertTitle>
-              <AlertDescription>Everything looks good!</AlertDescription>
-            </Alert>
-          ) : (
-            <ScrollArea className="w-full h-full border border-border rounded-lg rounded-r-sm">
-              <div className="p-2 pr-3 flex flex-col gap-4">
-                {reports.map((report, index) => (
-                  <ReportDisplay key={index} report={report} />
-                ))}
-              </div>
-            </ScrollArea>
-          )}
-        </main>
-      </section>
+      <ReportsSection
+        description={
+          <>
+            If there are issues with type checking, relevant errors and warnings
+            will be listed here.
+          </>
+        }
+        reports={reports}
+      />
     </div>
   );
 }

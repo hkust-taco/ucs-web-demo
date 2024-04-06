@@ -9,11 +9,11 @@ import {
 import { Example } from "@/lib/examples";
 import { indentWithTab } from "@codemirror/commands";
 import { basicSetup } from "codemirror";
-import { Separator } from "../ui/separator";
+// import { Separator } from "../ui/separator";
 import { ConfirmDialog, useConfirmDialog } from "./ConfirmDialog";
 import { ExampleLoadForm } from "./examples";
 import { RunButton } from "./run";
-import { ExampleSaveDialog } from "./save";
+// import { ExampleSaveDialog } from "./save";
 import { useAppendExample } from "@/lib/examples/hooks";
 
 export type EditorPanelContentProps = {
@@ -77,7 +77,7 @@ export function EditorPanelContent({ onRun }: EditorPanelContentProps) {
     <div className="p-4 w-full h-full flex flex-col gap-4">
       <header className="w-full flex-shrink-0 flex flex-row gap-3 items-center">
         <ExampleLoadForm className="flex-grow" onLoad={onLoadExample} />
-        <ExampleSaveDialog
+        {/* <ExampleSaveDialog
           onSubmit={(data) => {
             appendExample({
               group: "user",
@@ -86,8 +86,8 @@ export function EditorPanelContent({ onRun }: EditorPanelContentProps) {
               builtin: false,
             });
           }}
-        />
-        <Separator orientation="vertical" />
+        /> */}
+        {/* <Separator orientation="vertical" /> */}
         <RunButton onClick={onRunClick} />
       </header>
       <main className="w-full min-h-0 flex-grow" ref={containerRef}></main>

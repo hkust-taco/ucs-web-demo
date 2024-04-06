@@ -15,6 +15,7 @@ import {
   TermNode,
 } from "./nodes";
 import { StageSection } from "./StageSection";
+import { Badge } from "@/components/ui/badge";
 
 export type ParsingContentProps = {
   caption: ReactNode;
@@ -39,9 +40,15 @@ type SplitNodeProps = {
   prefix?: ReactNode;
   split: SourceSplit;
   connective?: boolean;
+  tag?: string;
 };
 
-function SplitNode({ prefix, split, connective = false }: SplitNodeProps) {
+function SplitNode({
+  prefix,
+  split,
+  connective = false,
+  tag = "TermSplit",
+}: SplitNodeProps) {
   const [splitOpen, setSplitOpen] = useState(true);
   return (
     <>
@@ -54,9 +61,18 @@ function SplitNode({ prefix, split, connective = false }: SplitNodeProps) {
         ) : (
           <div className="inline-flex flex-row items-center">
             {connective ? <Connective>and</Connective> : null}
-            <SplitOpeningNode open={splitOpen} onOpenChange={setSplitOpen} />
+            <SplitOpeningNode
+              open={splitOpen}
+              tag={tag}
+              onOpenChange={setSplitOpen}
+            />
             {splitOpen ? null : (
               <>
+                {typeof tag === "string" ? (
+                  <Badge className="ml-2 split-type-badge" variant="outline">
+                    {tag}
+                  </Badge>
+                ) : null}
                 <EllipsisIcon className="mx-1 w-4 h-4" />
                 <SplitClosingNode
                   open={splitOpen}
@@ -77,7 +93,11 @@ function SplitNode({ prefix, split, connective = false }: SplitNodeProps) {
   );
 }
 
-function NestedSplitNode({ split }: { split: SourceSplit }) {
+export type NestedSplitNodeProps = {
+  split: SourceSplit;
+};
+
+function NestedSplitNode({ split }: NestedSplitNodeProps) {
   const elements: ReactNode[] = [];
   let current = split as SourceSplit;
   let index = 0;
@@ -125,6 +145,11 @@ function BranchNode({ branch }: { branch: SourceBranch }) {
       return (
         <SplitNode
           prefix={<span className="font-mono">{branch.operator}</span>}
+          tag={
+            branch.type === "OperatorBranch.Match"
+              ? "PatternSplit"
+              : "TermSplit"
+          }
           split={branch.continuation}
         />
       );
@@ -132,6 +157,7 @@ function BranchNode({ branch }: { branch: SourceBranch }) {
       return (
         <SplitNode
           prefix={<PatternNode pattern={branch.pattern} />}
+          tag="TermSplit"
           split={branch.continuation}
           connective
         />
@@ -140,6 +166,7 @@ function BranchNode({ branch }: { branch: SourceBranch }) {
       return (
         <SplitNode
           prefix={<TermNode term={branch.test} tooltip="Boolean test" />}
+          tag="TermSplit"
           split={branch.continuation}
           connective
         />
@@ -150,6 +177,7 @@ function BranchNode({ branch }: { branch: SourceBranch }) {
           prefix={
             <TermNode term={branch.left} tooltip="Conditional split LHS" />
           }
+          tag="OperatorSplit"
           split={branch.continuation}
         />
       );
@@ -162,6 +190,7 @@ function BranchNode({ branch }: { branch: SourceBranch }) {
               <span className="font-mono font-bold mx-2">is</span>
             </>
           }
+          tag="PatternSplit"
           split={branch.continuation}
         />
       );
