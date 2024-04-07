@@ -72,28 +72,28 @@ fun filter(x, p) =
     source: zipWith,
     builtin: true,
   },
-  {
-    group: "Real-World Examples",
-    name: "JSON Parser",
-    source: json,
-    builtin: true,
-  },
+  // {
+  //   group: "Real-World Examples",
+  //   name: "JSON Parser",
+  //   source: json,
+  //   builtin: true,
+  // },
   {
     group: "Real-World Examples",
     name: "Binary Search Tree",
     source: binarySearchTree,
     builtin: true,
   },
-  {
-    group: "Real-World Examples",
-    name: "Calculator",
-    source: calculator,
-    builtin: true,
-  },
-  {
-    group: "Real-World Examples",
-    name: "Lisp Interpreter",
-    source: lispInterpreter,
-    builtin: true,
-  },
+  // {
+  //   group: "Real-World Examples",
+  //   name: "Calculator",
+  //   source: calculator,
+  //   builtin: true,
+  // },
+  // {
+  //   group: "Real-World Examples",
+  //   name: "Lisp Interpreter",
+  //   source: lispInterpreter,
+  //   builtin: true,
+  // },
 ];
