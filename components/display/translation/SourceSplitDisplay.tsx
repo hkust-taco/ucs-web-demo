@@ -59,7 +59,7 @@ function SplitNode({
   const [splitOpen, setSplitOpen] = useState(true);
   return (
     <>
-      <div>
+      <div className="font-mono">
         {prefix}
         {split.type === "Nil" ? (
           <EmptySplitNode />
@@ -226,7 +226,7 @@ function PatternNode({ pattern }: { pattern: SourcePattern }) {
       );
     case "Class":
       return (
-        <span className="pl-1 pr-0.5 py-px bg-black/10 rounded-sm">
+        <span className="pl-1 pr-0.5 py-px bg-black/10 dark:bg-white/15 rounded-sm">
           {pattern.refined ? <span className="font-bold">refined</span> : null}
           <span className="font-mono">{pattern.name}</span>
           {pattern.parameters === undefined ? null : (

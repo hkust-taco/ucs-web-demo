@@ -10,7 +10,7 @@ import { MLscriptTerm } from "@mlscript/ucs-demo-build";
 import { ReactNode, useCallback, useState } from "react";
 
 export function Space() {
-  return <span className="w-2 font-mono"> </span>;
+  return <span className="w-2 font-mono">&nbsp;</span>;
 }
 
 export function Keyword({ children }: React.PropsWithChildren<{}>) {
@@ -23,7 +23,7 @@ export type ConstructorNodeProps = {
 
 export function ConstructorNode({ children }: ConstructorNodeProps) {
   return (
-    <span className="pl-1 pr-0.5 py-px bg-black/10 font-mono rounded-sm">
+    <span className="pl-1 pr-0.5 py-px bg-black/10 dark:bg-white/15 font-mono rounded-sm">
       {children}
     </span>
   );

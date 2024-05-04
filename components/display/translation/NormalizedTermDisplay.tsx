@@ -143,8 +143,7 @@ function NestedSplitNode({ cases }: { cases: NormalizedTermCase }) {
     if (current.type === "Case") {
       const { refined, pattern, rhs, tail } = current;
       elements.push(
-        <div key={index}>
-          <span className="font-mono font-bold mr-2">case</span>
+        <div key={index} className="">
           <PatternNode refined={refined} pattern={pattern} />
           <Connective>{"->"}</Connective>
           <NormalizedTermNode term={rhs} />
@@ -166,11 +165,7 @@ function NestedSplitNode({ cases }: { cases: NormalizedTermCase }) {
       break;
     }
   }
-  return elements.length === 1 ? (
-    elements[0]
-  ) : (
-    <IndentedBlock>{elements}</IndentedBlock>
-  );
+  return <IndentedBlock>{elements}</IndentedBlock>;
 }
 
 function PatternNode({

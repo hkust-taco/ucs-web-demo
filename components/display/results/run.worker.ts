@@ -9,7 +9,12 @@ export type TaskInput = {
 export type TaskResult = {
   id: string;
   variables: [string, JavaScriptType, string][];
-  error?: string;
+  error?: TaskResultError;
+};
+
+export type TaskResultError = {
+  message: string;
+  stack?: string;
 };
 
 function getEnrichedType(value: unknown): JavaScriptType {
@@ -38,7 +43,16 @@ self.onmessage = (event: MessageEvent<TaskInput>) => {
     self.postMessage({
       id: event.data.id,
       variables: [],
-      error: String(error),
+      error:
+        error instanceof Error
+          ? {
+              message: error.message,
+              stack: error.stack,
+            }
+          : {
+              message: String(error),
+              stack: undefined,
+            },
     } as TaskResult);
   }
 };

@@ -8,6 +8,7 @@ import { TaskSelect } from "./TaskSelect";
 import { VariableTable } from "./VariableTable";
 import type { TaskResult } from "./run.worker";
 import { useTasks } from "./useTasks";
+import { StackTraceDisplay } from "../StackTraceDisplay";
 
 export type EvaluationResultProps = {};
 
@@ -102,7 +103,14 @@ export function EvaluationResult({}: EvaluationResultProps) {
                     <OctagonXIcon className="w-4 h-4 mr-1" />
                     <span className="font-semibold uppercase">Error</span>
                   </header>
-                  <div className="p-2 text-primary">{selectedTask.error}</div>
+                  <div className="p-2 text-primary">
+                    <p>{selectedTask.error.message}</p>
+                    {selectedTask.error.stack ? (
+                      <StackTraceDisplay
+                        stack={selectedTask.error.stack.split("\n")}
+                      />
+                    ) : null}
+                  </div>
                 </div>
               ) : (
                 <VariableTable variables={selectedTask?.variables ?? []} />

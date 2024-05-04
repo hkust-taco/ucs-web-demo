@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { EvaluatedVariable } from "./VariableTable";
 import { Report } from "@mlscript/ucs-demo-build";
+import type { TaskResultError } from "./run.worker";
 
 export type Task = {
   id: string;
@@ -12,7 +13,7 @@ export type Task = {
       evaluatedAt: Date | null;
       code: string;
       variables: EvaluatedVariable[];
-      error?: string;
+      error?: TaskResultError;
     }
 );
 

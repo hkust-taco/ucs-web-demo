@@ -1,6 +1,7 @@
 import { Report } from "@mlscript/ucs-demo-build";
 import { OctagonAlertIcon, OctagonXIcon, SkullIcon } from "lucide-react";
 import { useMemo } from "react";
+import { StackTraceDisplay } from "../StackTraceDisplay";
 
 export type ReportDisplayProps = { report: Report };
 
@@ -28,18 +29,7 @@ export function ReportDisplay({ report }: ReportDisplayProps) {
             <p>
               <strong>Message:</strong> {report.message}
             </p>
-            <div>
-              <div>
-                <strong>Stack:</strong>
-              </div>
-              <ul className="pl-6 list-disc text-sm">
-                {report.stack.slice(0, 10).map((frame, index) => (
-                  <li key={index}>
-                    <span className="text-muted-foreground">{frame}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <StackTraceDisplay stack={report.stack} />
           </>
         ) : (
           report.messages.map((message, index) =>

@@ -119,7 +119,7 @@ export function TranslationContent({
         <div className="flex flex-row gap-4 items-center">
           <Label className="flex-shrink-0">Show UCS term</Label>
           <Button
-            className="select-none"
+            className="select-none flex-shrink-0"
             variant="outline"
             onClick={selectPrevious}
             disabled={selectedTranslationResult?.index === 0}
@@ -131,11 +131,11 @@ export function TranslationContent({
             value={selectedTranslationResultId}
             onValueChange={setSelectedTranslationResultId}
           >
-            <SelectTrigger className="flex-grow">
+            <SelectTrigger className="flex-1">
               <SelectValue
                 id="run"
                 className="select-none"
-                placeholder="Please select a run to display the variable's results in the table below."
+                placeholder="Please select a UCS expression to show."
               />
             </SelectTrigger>
             <SelectContent>
@@ -162,7 +162,7 @@ export function TranslationContent({
             </SelectContent>
           </Select>
           <Button
-            className="select-none"
+            className="select-none flex-shrink-0"
             variant="outline"
             onClick={selectNext}
             disabled={
