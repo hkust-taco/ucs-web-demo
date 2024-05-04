@@ -9,6 +9,7 @@ import { basicSetup } from "codemirror";
 import { useEffect, useRef } from "react";
 import { SectionCaption } from "../SectionCaption";
 import { ReportsSection } from "./ReportsSection";
+import { SectionDescription } from "../SectionDescription";
 
 export type TypeInferenceContentProps = {
   types: StageResult<string> | null;
@@ -58,10 +59,10 @@ export function TypeInferenceContent({ types }: TypeInferenceContentProps) {
     >
       <section className="flex flex-col gap-1.5 w-full overflow-hidden">
         <SectionCaption>Inferred Types</SectionCaption>
-        <p className="flex-shrink-0 text-sm text-muted-foreground mb-1.5">
+        <SectionDescription>
           The type inference and check results of the code on the left side will
           be displayed here.
-        </p>
+        </SectionDescription>
         <main className="min-h-0 flex-1 w-full">
           <div className="w-full h-full" ref={containerRef}></div>
         </main>

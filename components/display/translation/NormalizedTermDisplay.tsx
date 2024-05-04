@@ -166,7 +166,11 @@ function NestedSplitNode({ cases }: { cases: NormalizedTermCase }) {
       break;
     }
   }
-  return <IndentedBlock>{elements}</IndentedBlock>;
+  return elements.length === 1 ? (
+    elements[0]
+  ) : (
+    <IndentedBlock>{elements}</IndentedBlock>
+  );
 }
 
 function PatternNode({

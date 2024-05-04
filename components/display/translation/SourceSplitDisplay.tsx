@@ -9,7 +9,9 @@ import { Fragment, ReactNode, useState } from "react";
 import {
   Connective,
   EmptySplitNode,
+  Keyword,
   SingleElseSplitNode,
+  Space,
   SplitClosingNode,
   SplitOpeningNode,
   TermNode,
@@ -29,7 +31,12 @@ export function SourceSplitDisplay({
   return (
     <StageSection caption={caption}>
       <SplitNode
-        prefix={<span className="font-mono font-medium mr-2">if</span>}
+        prefix={
+          <>
+            <Keyword>if</Keyword>
+            <Space />
+          </>
+        }
         split={topLevelSplit}
       />
     </StageSection>
@@ -39,14 +46,14 @@ export function SourceSplitDisplay({
 type SplitNodeProps = {
   prefix?: ReactNode;
   split: SourceSplit;
-  connective?: boolean;
+  beginsWithAnd?: boolean;
   tag?: string;
 };
 
 function SplitNode({
   prefix,
   split,
-  connective = false,
+  beginsWithAnd = false,
   tag = "TermSplit",
 }: SplitNodeProps) {
   const [splitOpen, setSplitOpen] = useState(true);
@@ -60,7 +67,7 @@ function SplitNode({
           <SingleElseSplitNode split={split} style="source" />
         ) : (
           <div className="inline-flex flex-row items-center">
-            {connective ? <Connective>and</Connective> : null}
+            {beginsWithAnd ? <Connective>and</Connective> : null}
             <SplitOpeningNode
               open={splitOpen}
               tag={tag}
@@ -144,7 +151,12 @@ function BranchNode({ branch }: { branch: SourceBranch }) {
     case "OperatorBranch.Match":
       return (
         <SplitNode
-          prefix={<span className="font-mono">{branch.operator}</span>}
+          prefix={
+            <>
+              <span className="font-mono">{branch.operator}</span>
+              <Space />
+            </>
+          }
           tag={
             branch.type === "OperatorBranch.Match"
               ? "PatternSplit"
@@ -159,7 +171,7 @@ function BranchNode({ branch }: { branch: SourceBranch }) {
           prefix={<PatternNode pattern={branch.pattern} />}
           tag="TermSplit"
           split={branch.continuation}
-          connective
+          beginsWithAnd
         />
       );
     case "TermBranch.Boolean":
@@ -168,14 +180,17 @@ function BranchNode({ branch }: { branch: SourceBranch }) {
           prefix={<TermNode term={branch.test} tooltip="Boolean test" />}
           tag="TermSplit"
           split={branch.continuation}
-          connective
+          beginsWithAnd
         />
       );
     case "TermBranch.Left":
       return (
         <SplitNode
           prefix={
-            <TermNode term={branch.left} tooltip="Conditional split LHS" />
+            <>
+              <TermNode term={branch.left} tooltip="Conditional split LHS" />
+              <Space />
+            </>
           }
           tag="OperatorSplit"
           split={branch.continuation}
@@ -187,7 +202,9 @@ function BranchNode({ branch }: { branch: SourceBranch }) {
           prefix={
             <>
               <TermNode term={branch.scrutinee} tooltip="Scrutinee" />
-              <span className="font-mono font-bold mx-2">is</span>
+              <Space />
+              <Keyword>is</Keyword>
+              <Space />
             </>
           }
           tag="PatternSplit"

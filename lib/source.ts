@@ -10,6 +10,10 @@ export class Source {
     }
   }
 
+  slice(start: number, end: number): string {
+    return this.source.slice(start, end);
+  }
+
   lookup(pos: number): [line: number, column: number] {
     let left = 0, // closed interval
       right = this.lineStartIndex.length; // open interval

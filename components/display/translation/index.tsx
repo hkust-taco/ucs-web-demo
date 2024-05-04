@@ -10,13 +10,15 @@ import {
 } from "@/components/ui/select";
 import { Source } from "@/lib/source";
 import { type Compilation } from "@mlscript/ucs-demo-build";
-import { InfoIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, InfoIcon } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { CoreSplitDisplay } from "./CoreSplitDisplay";
 import { NormalizedTermDisplay } from "./NormalizedTermDisplay";
 import { SourceSplitDisplay } from "./SourceSplitDisplay";
 import { SourceCodeDisplay } from "./SourceCodeDisplay";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 
 export type TranslationContentProps = {
   sourceCode: string | null;
@@ -33,27 +35,33 @@ export function TranslationContent({
   );
   const translationResultList = useMemo(() => {
     if (!compilation?.translation) return [];
-    console.log("Updated", compilation?.translation);
-    return (
-      compilation?.translation?.content?.map((translateResult) => ({
-        id: nanoid(),
-        location:
+    const results = (
+      compilation?.translation?.content?.map((translateResult) => {
+        const location =
           translateResult.locations === undefined || source === null
             ? undefined
             : [
                 source.lookup(translateResult.locations[0]),
                 source.lookup(translateResult.locations[1]),
-              ],
-        source:
-          typeof sourceCode === "string" &&
-          translateResult.locations !== undefined
-            ? sourceCode.slice(...translateResult.locations)
-            : null,
-        transformed: translateResult.transformed,
-        desugared: translateResult.desugared,
-        normalized: translateResult.normalized,
-        postProcessed: translateResult.postProcessed,
-      })) ?? []
+              ];
+        const excerpt =
+          source !== null && location !== undefined
+            ? source.slice(
+                source.lineStartIndex[location[0][0] - 1],
+                translateResult!.locations![1]
+              )
+            : null;
+        return {
+          index: 0,
+          id: nanoid(),
+          location,
+          source: excerpt,
+          transformed: translateResult.transformed,
+          desugared: translateResult.desugared,
+          normalized: translateResult.normalized,
+          postProcessed: translateResult.postProcessed,
+        };
+      }) ?? []
     ).sort((a, b) => {
       if (a.location === undefined) return -1;
       if (b.location === undefined) return 1;
@@ -61,7 +69,11 @@ export function TranslationContent({
         ? a.location[0][1] - b.location[0][1]
         : a.location[0][0] - b.location[0][0];
     });
-  }, [sourceCode, source, compilation?.translation]);
+    for (let i = 0; i < results.length; i++) {
+      results[i].index = i;
+    }
+    return results;
+  }, [source, compilation?.translation]);
   useEffect(() => {
     setSelectedTranslationResultId(
       translationResultList.length === 0
@@ -76,6 +88,20 @@ export function TranslationContent({
       (result) => result.id === selectedTranslationResultId
     );
   }, [selectedTranslationResultId, translationResultList]);
+  const selectPrevious = useCallback(() => {
+    const currentIndex = selectedTranslationResult?.index;
+    if (currentIndex === undefined) return;
+    const nextIndex = currentIndex - 1;
+    if (nextIndex < 0) return;
+    setSelectedTranslationResultId(translationResultList[nextIndex].id);
+  }, [selectedTranslationResult, translationResultList]);
+  const selectNext = useCallback(() => {
+    const currentIndex = selectedTranslationResult?.index;
+    if (currentIndex === undefined) return;
+    const nextIndex = currentIndex + 1;
+    if (nextIndex >= translationResultList.length) return;
+    setSelectedTranslationResultId(translationResultList[nextIndex].id);
+  }, [selectedTranslationResult, translationResultList]);
   return (
     <div className="w-full h-full flex flex-col gap-4">
       <header className="flex-shrink-0 flex flex-col gap-4">
@@ -92,6 +118,15 @@ export function TranslationContent({
         ) : null}
         <div className="flex flex-row gap-4 items-center">
           <Label className="flex-shrink-0">Show UCS term</Label>
+          <Button
+            className="select-none"
+            variant="outline"
+            onClick={selectPrevious}
+            disabled={selectedTranslationResult?.index === 0}
+          >
+            <ChevronLeftIcon className="h-4 w-4" />
+            <span>Previous</span>
+          </Button>
           <Select
             value={selectedTranslationResultId}
             onValueChange={setSelectedTranslationResultId}
@@ -126,10 +161,23 @@ export function TranslationContent({
               ) : null}
             </SelectContent>
           </Select>
+          <Button
+            className="select-none"
+            variant="outline"
+            onClick={selectNext}
+            disabled={
+              selectedTranslationResult?.index ===
+              translationResultList.length - 1
+            }
+          >
+            <span>Next</span>
+            <ChevronRightIcon className="h-4 w-4" />
+          </Button>
         </div>
       </header>
+      <Separator />
       <ScrollArea className="flex-1 min-h-0">
-        <div className="flex flex-col gap-4 px-1">
+        <div className="flex flex-col gap-4">
           {selectedTranslationResult === undefined ? undefined : (
             <>
               <SourceCodeDisplay

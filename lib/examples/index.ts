@@ -7,6 +7,8 @@ import calculator from "./Calculator.mls";
 import lispInterpreter from "./LispInterpreter.mls";
 import variousSplits from "./variousSplits.mls";
 import split2 from "./split-2.mls";
+import sign from "./sign.mls";
+import guards from "./guards.mls";
 
 export const ExampleSchema = z.object({
   group: z.string().default("user"),
@@ -33,31 +35,13 @@ export const examples: Example[] = [
   {
     group: "General",
     name: "guards",
-    source: `abstract class Option[T]
-class Some[T](value: T) extends Option[T]
-module None extends Option[nothing]
-
-fun filter(x, p) =
-  if x is
-    Some(xv) and p(xv) then x
-    else None
-`,
+    source: guards,
     builtin: true,
   },
   {
     group: "General",
     name: "sign",
-    source: [
-      "fun sign(x) = if x",
-      "  < 0 then -1",
-      "  > 0 then 1",
-      "  else then 0",
-      "",
-      "sign(42)",
-      "sign(0)",
-      "sign(-10)",
-      "",
-    ].join("\n"),
+    source: sign,
     builtin: true,
   },
   {
@@ -84,16 +68,16 @@ fun filter(x, p) =
     source: binarySearchTree,
     builtin: true,
   },
-  // {
-  //   group: "Real-World Examples",
-  //   name: "Calculator",
-  //   source: calculator,
-  //   builtin: true,
-  // },
-  // {
-  //   group: "Real-World Examples",
-  //   name: "Lisp Interpreter",
-  //   source: lispInterpreter,
-  //   builtin: true,
-  // },
+  {
+    group: "Real-World Examples",
+    name: "Calculator",
+    source: calculator,
+    builtin: true,
+  },
+  {
+    group: "Real-World Examples",
+    name: "Lisp Interpreter",
+    source: lispInterpreter,
+    builtin: true,
+  },
 ];

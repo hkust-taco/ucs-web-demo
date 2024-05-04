@@ -72,12 +72,17 @@ export function EditorPanelContent({ onRun }: EditorPanelContentProps) {
     },
     [showDialog, onRun]
   );
-  const appendExample = useAppendExample();
+  // const appendExample = useAppendExample();
   return (
-    <div className="p-4 w-full h-full flex flex-col gap-4">
-      <header className="w-full flex-shrink-0 flex flex-row gap-3 items-center">
-        <ExampleLoadForm className="flex-grow" onLoad={onLoadExample} />
-        {/* <ExampleSaveDialog
+    <div className="w-full h-full flex flex-col">
+      <header className="w-full flex-shrink-0 p-4 flex flex-row gap-3 justify-between items-center border-b border-b-border">
+        <div className="font-bold text-lg">Code Editor</div>
+        <RunButton onClick={onRunClick} />
+      </header>
+      <div className="p-4 w-full min-h-0 flex-grow flex flex-col gap-4">
+        <header className="w-full flex-shrink-0 flex flex-row gap-3 items-center">
+          <ExampleLoadForm className="flex-grow" onLoad={onLoadExample} />
+          {/* <ExampleSaveDialog
           onSubmit={(data) => {
             appendExample({
               group: "user",
@@ -87,11 +92,11 @@ export function EditorPanelContent({ onRun }: EditorPanelContentProps) {
             });
           }}
         /> */}
-        {/* <Separator orientation="vertical" /> */}
-        <RunButton onClick={onRunClick} />
-      </header>
-      <main className="w-full min-h-0 flex-grow" ref={containerRef}></main>
-      <ConfirmDialog {...dialogProps} />
+          {/* <Separator orientation="vertical" /> */}
+        </header>
+        <main className="w-full min-h-0 flex-grow" ref={containerRef}></main>
+        <ConfirmDialog {...dialogProps} />
+      </div>
     </div>
   );
 }

@@ -7,7 +7,9 @@ import { StageSection } from "./StageSection";
 import {
   Connective,
   EmptySplitNode,
+  Keyword,
   SingleElseSplitNode,
+  Space,
   SplitClosingNode,
   SplitOpeningNode,
   TermNode,
@@ -127,7 +129,9 @@ function BranchNode({ branch }: { branch: CoreBranch }) {
       prefix={
         <>
           <span className="font-mono">{branch.scrutinee}</span>
-          <span className="font-mono font-bold mx-2">is</span>
+          <Space />
+          <Keyword>is</Keyword>
+          <Space />
           <PatternNode pattern={branch.pattern} />
         </>
       }

@@ -79,7 +79,7 @@ export function VariableTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="w-full text-xs">
+                  <div className="w-full text-sm">
                     <code className="font-mono">{variable.inspection}</code>
                   </div>
                 </TableCell>

@@ -5,8 +5,29 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import { MLscriptTerm } from "@mlscript/ucs-demo-build";
-import { ReactNode, useCallback } from "react";
+import { ReactNode, useCallback, useState } from "react";
+
+export function Space() {
+  return <span className="w-2 font-mono"> </span>;
+}
+
+export function Keyword({ children }: React.PropsWithChildren<{}>) {
+  return <span className="font-mono font-semibold">{children}</span>;
+}
+
+export type ConstructorNodeProps = {
+  children: ReactNode;
+};
+
+export function ConstructorNode({ children }: ConstructorNodeProps) {
+  return (
+    <span className="pl-1 pr-0.5 py-px bg-black/10 font-mono rounded-sm">
+      {children}
+    </span>
+  );
+}
 
 export type TermNodeProps = {
   term: MLscriptTerm;
@@ -14,14 +35,42 @@ export type TermNodeProps = {
 };
 
 export function TermNode({ term, tooltip }: TermNodeProps) {
+  let results: RegExpMatchArray | null = null;
+  let content: ReactNode;
+  if ((results = term.term.match(/^\((\w+)\)\.unapply\((.+)\)$/))) {
+    const [, className, argumentsText] = results;
+    content = (
+      <span className="font-mono">
+        <ConstructorNode>{className}</ConstructorNode>
+        <span className="font-semibold">.</span>
+        <span className="text-muted-foreground">unapply</span>
+        <span className="font-semibold">(</span>
+        <span className="text-primary/85 underline underline-offset-4 truncate">
+          {argumentsText}
+        </span>
+        <span className="font-semibold">)</span>
+      </span>
+    );
+  } else if ((results = term.term.match(/^\(([\w\$]+)\)\.(\d+)/))) {
+    const [, tupleName, index] = results;
+    content = (
+      <span className="font-mono">
+        <span className="underline underline-offset-4">{tupleName}</span>
+        <span className="font-semibold">.</span>
+        <span className="font-medium ">{index}</span>
+      </span>
+    );
+  } else {
+    content = (
+      <span className="font-mono text-primary/85 underline underline-offset-4 truncate">
+        {term.term}
+      </span>
+    );
+  }
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <span className="font-mono text-primary/85 underline underline-offset-4 truncate">
-            {term.term}
-          </span>
-        </TooltipTrigger>
+        <TooltipTrigger asChild>{content}</TooltipTrigger>
         <TooltipContent>{tooltip ?? <p>Term</p>}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -30,9 +79,13 @@ export function TermNode({ term, tooltip }: TermNodeProps) {
 
 export function Connective({ children }: { children: ReactNode }) {
   return (
-    <span className="mx-2 font-mono font-bold text-muted-foreground">
-      {children}
-    </span>
+    <>
+      <Space />
+      <span className="font-mono font-bold text-muted-foreground">
+        {children}
+      </span>
+      <Space />
+    </>
   );
 }
 
@@ -60,7 +113,7 @@ export function SplitOpeningNode({
       {"{"}
       {typeof tag === "string" && open ? (
         <Badge
-          className="absolute top-1/2 left-full translate-x-1 -translate-y-1/2 split-type-badge"
+          className="absolute top-1/2 left-full translate-x-1 -translate-y-1/2 split-type-badge select-none"
           variant="outline"
         >
           {tag}
@@ -121,9 +174,23 @@ export function SingleElseSplitNode({
 }
 
 export function IndentedBlock({ children }: { children: ReactNode }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const onMouseEnter = useCallback(() => setIsHovered(true), []);
+  const onMouseLeave = useCallback(() => setIsHovered(false), []);
   return (
-    <div className="relative ml-4">
-      <div className="absolute top-0 left-0 bottom-0 w-px bg-border -translate-x-4" />
+    <div
+      className="relative ml-4 group"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <div
+        className={cn(
+          "absolute top-0 left-0 bottom-0 w-px bg-border -translate-x-4 transition-colors",
+          isHovered ? "bg-muted-foreground" : "bg-border"
+        )}
+        role="separator"
+        aria-hidden
+      />
       {children}
     </div>
   );

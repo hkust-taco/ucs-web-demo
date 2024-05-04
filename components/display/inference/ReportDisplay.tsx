@@ -1,9 +1,13 @@
 import { Report } from "@mlscript/ucs-demo-build";
 import { OctagonAlertIcon, OctagonXIcon, SkullIcon } from "lucide-react";
+import { useMemo } from "react";
 
 export type ReportDisplayProps = { report: Report };
 
 export function ReportDisplay({ report }: ReportDisplayProps) {
+  // const messages = useMemo(() => {
+
+  // }, [report.])
   return (
     <div className="flex flex-col border border-rose-700 dark:border-rose-900 rounded-md overflow-hidden shadow bg-background">
       <header className="px-2  py-1 bg-rose-700 dark:bg-rose-900 text-secondary dark:text-primary flex flex-row items-center">
@@ -14,7 +18,9 @@ export function ReportDisplay({ report }: ReportDisplayProps) {
         ) : (
           <OctagonAlertIcon className="w-4 h-4 mr-1" />
         )}
-        <span className="font-semibold uppercase">{report.kind}</span>
+        <span className="font-semibold uppercase">
+          {report.kind === "fatal" ? "fatal error" : report.kind}
+        </span>
       </header>
       <div className="p-3 pb-4 text-primary flex flex-col gap-1">
         {report.kind === "fatal" ? (
