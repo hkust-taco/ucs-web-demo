@@ -1,298 +1,176 @@
-@top Program { TypingUnit }
-
-TypingUnit { declaration* }
-
-declaration[@isGroup=Declaration] {
-  TypeDeclaration |
-  FunctionDeclaration |
-  TraitDeclaration |
-  ClassDeclaration |
-  LetDeclaration |
-  ValueDeclaration |
-  ModuleDeclaration
+@precedence {
+  typeApplication,
+  intersection @left,
+  union @left,
+  call
 }
 
-// Class
+@top Program { topLevelDeclaration* }
+
+topLevelDeclaration {
+  ClassDeclaration |
+  ModuleDeclaration |
+  FunctionDeclaration |
+  LetDeclaration
+}
 
 ClassDeclaration {
   kw<"abstract">?
   kw<"class">
-  Identifier
+  TypeName
   TypeParameterList?
   ClassParameterList?
-  TypeSignature?
   ExtendsClause?
-  ClassLikeBody?
 }
+
+ModuleDeclaration {
+  kw<"module">
+  TypeName
+  ExtendsClause?
+}
+
+ExtendsClause { kw<"extends"> type }
+
+FunctionDeclaration {
+  kw<"fun"> UserDefinedOp? VariableName FunctionParameterList 
+  TypeAnnotation?
+  FunctionBody?
+}
+
+FunctionParameterList {
+  "(" commaSep0<FunctionParameter> ")"
+}
+
+FunctionParameter {
+  ParameterName TypeAnnotation?
+}
+
+FunctionBody { "=" expression }
+
+VariableName { identifier }
+
+UserDefinedOp { "(" userDefinedOp ")" }
+
+LetDeclaration {
+  kw<"let"> VariableName FunctionParameterList?
+  TypeAnnotation? FunctionBody
+}
+
+TypeName { identifier }
+
+TypeParameterList {
+  "[" commaSep1<TypeParameter> "]"
+}
+
+TypeParameter { Variance? TypeName }
+
+Variance { kw<"in"> | kw<"out"> }
 
 ClassParameterList { "(" commaSep0<ClassParameter> ")" }
 
-ClassParameter { Identifier TypeSignature }
-
-TypeParameterList { "[" commaSep1<TypeParameter> "]" }
-
-TypeParameter { (kw<"in"> | kw<"out">)? Identifier TypeSignature? }
-
-ExtendsClause { kw<"extends"> commaSep1<type> }
-
-TypeSignature { ":" type }
-
-ClassLikeBody { "{" TypingUnit "}" }
-
-// Module
-
-ModuleDeclaration { module Identifier ExtendsClause? ClassLikeBody? }
-
-// Trait
-
-TraitDeclaration { kw<"trait"> Identifier TypeParameterList? TypeSignature? ClassLikeBody? }
-
-// Type
-
-TypeDeclaration { kw<"type"> Identifier TypeParameterList? "=" type }
-
-// Function
-
-FunctionDeclaration {
-  kw<"fun"> Identifier FunctionParameterList TypeSignature? definition
-}
-FunctionParameterList { "(" commaSep0<FunctionParameter> ")" }
-FunctionParameter { Identifier TypeSignature? }
-
-// Let
-
-LetDeclaration {
-  kw<"let"> Identifier FunctionParameterList? TypeSignature? definition
+ClassParameter {
+  kw<"val">? ParameterName TypeAnnotation
 }
 
-// Value
-
-ValueDeclaration { kw<"val"> Identifier TypeSignature? "=" definition }
-
-// end declarations
-
-// begin types
+ParameterName { identifier }
 
 type[@isGroup=Type] {
-  BuiltInType |
-  TypeVariable { "'" Identifier } |
-  TypeApplication {
-    Identifier !application TypeArgumentList
-  } |
+  ThisType { kw<"this"> } |
+  TypeName |
+  TypeVariable |
+  LiteralType { boolean | Number | String } |
   ParenthesizedType { "(" type ")" } |
-  Identifier
-  // UnionType |
-  // IntersectionType |
-  // FunctionType |
-  // TupleType |
+  UnionType { type (!union unionOp type)+ } |
+  TupleType { "[" commaSep0<type> "]" } |
+  RecordType |
+  IntersectionType { type (!intersection intersectionOp type)+ } |
+  TypeApplication { TypeName !typeApplication TypeArgumentList } |
+  ForallType { kw<"forall"> commaSep1<TypeVariable> "." type }
 }
 
-BuiltInType {
-  kw<"Int"> |
-  kw<"Str"> |
-  kw<"Bool"> |
-  kw<"nothing"> |
-  kw<"anything">
+TypeVariable { "'" identifier }
+
+RecordType {
+  "{" commaSep0<PropertyName TypeAnnotation> "}"
 }
 
-TypeArgumentList { "[" commaSep1<type> "]" }
+PropertyName { identifier }
 
-// end types
+TypeAnnotation { ":" type }
 
-kw<term> { @specialize[@name={term}]<Identifier, term> }
+TypeArgumentList[@dynamicPrecedence=1] { "[" commaSep0<type> "]" }
 
-// Escape reserved export name `module`.
-module { @specialize[@name="_module"]<Identifier, "module"> }
+expression[@isGroup=Expression] { simpleExpression }
 
-@tokens {
-  digit { $[0-9] }
-  identifierStart { $[a-zA-Z] | "_" }
-  identifierPart { $[a-zA-Z] | "_" | digit }
-  Identifier { identifierStart identifierPart* }
-  LineComment { "//" ![\n]* }
-  "="[@name="EqualSign"]
-  hex { digit | $[a-fA-F] }
-  Number {
-    (digit ("_" | digit)* ("." ("_" | digit)*)? | "." digit ("_" | digit)*)
-      (("e" | "E") ("+" | "-")? ("_" | digit)+)? |
-    digit ("_" | digit)* "n" |
-    "0x" (hex | "_")+ "n"? |
-    "0b" $[01_]+ "n"? |
-    "0o" $[0-7_]+ "n"?
+simpleExpression {
+  Number |
+  String |
+  VariableName |
+  boolean |
+  kw<"this"> |
+  kw<"super"> |
+  CallExpression {
+    simpleExpression !call FunctionArgumentList
   }
-  Index { digit+ }
-  ArithOp<op> { op }
-  multiplicative { ArithOp<"*"> | ArithOp<"/"> | ArithOp<"%"> }
-  additive { ArithOp<"+"> | ArithOp<"-"> }
-  RelOp<op> { op }
-  comparative { RelOp<"<"> | RelOp<">"> | RelOp<"<="> | RelOp<">="> | RelOp<"=="> | RelOp<"!="> }
-  LogicOp<op> { op }
-  whitespaces[@name=WhitespacesDebug] { $[ \t]+ }
-  @precedence { LineComment, multiplicative }
-  @precedence { Number, "." }
 }
 
-@skip { whitespaces | keep | LineComment }
+FunctionArgumentList {
+  "(" commaSep0<simpleExpression> ")"
+}
 
+kw<term> { @specialize[@name={term}]<identifier, term> }
 
 commaSep0<content> {
-  (content ("," content)*)?
+  "" | content ("," content?)*
 }
 
 commaSep1<content> {
   content ("," content)*
 }
 
-@precedence {
-  // type precedence
-  application,
-  // expression precedence
-  member,
-  new,
-  call,
-  times @left,
-  plus @left,
-  rel @left
+unionOp[@name=LogicOp] { "|" }
+
+intersectionOp[@name=LogicOp] { "&" }
+
+boolean { @specialize[@name=BooleanLiteral]<identifier, "true" | "false"> }
+
+@skip { spaces | newline }
+
+@skip {} {
+  // String[isolate] {
+  String { // Comment this when not using lezer-playground
+    '"' (stringContentDouble | Escape)* ('"' | "\n")
+  }
 }
 
-// @skip { whitespaces | blankLine | LineComment } {
+@tokens {
+  spaces[@export] { $[\u0009 \u000b\u00a0\u1680\u2000-\u200a\u202f\u205f\u3000\ufeff]+ }
+  newline[@export] { $[\r\n\u2028\u2029] }
+  identifierChar { @asciiLetter | $[_$\u{a1}-\u{10ffff}] }
+  word { identifierChar (identifierChar | @digit)* }
+  identifier { word "'"* }
 
-  definition { "=" rhs }
+  @precedence { spaces, newline, identifier }
 
-  rhs {
-    expression |
-    BlockExpression
+  @precedence { spaces, newline, word }
+
+  hex { @digit | $[a-fA-F] }
+
+  Number {
+    (@digit ("_" | @digit)* ("." ("_" | @digit)*)? | "." @digit ("_" | @digit)*)
+      (("e" | "E") ("+" | "-")? ("_" | @digit)+)? |
+    @digit ("_" | @digit)* "n" |
+    "0x" (hex | "_")+ "n"? |
+    "0b" $[01_]+ "n"? |
+    "0o" $[0-7_]+ "n"?
+  }
+  @precedence { Number "." }
+
+  Escape {
+    "\\" ("x" hex hex | "u" ("{" hex+ "}" | hex hex hex hex) | ![xu])
   }
 
-  BlockExpression {
-    indent blockContent dedent
-  }
+  stringContentDouble { ![\\\n"]+ }
 
-  blockContent {
-    blockElement*
-  }
-  
-  blockElement[@name=BlockElementDebug] { expression }
-
-  tupleElement { expression "," }
-  tupleLastElement { expression "]" }
-
-  expression {
-    Literal |
-    Identifier ~lambda |
-    kw<"this"> |
-    kw<"super"> |
-    BinaryExpression |
-    TupleExpression |
-    RecordExpression { "{" commaSep0<RecordField> "}" } |
-    NewExpression { kw<"new"> Identifier TypeArgumentList? (!new ArgumentList) } |
-    UnaryExpression { (LogicOp<"!"> | additive) expression } |
-    ParenthesizedExpression { "(" expression ")" } |
-    LambdaExpression { LambdaParameterList "=>" expression } |
-    MemberExpression { expression !member "." (Identifier | Index) } |
-    CallExpression { expression !call ArgumentList } |
-    UltimateConditionalSyntax
-  }
-
-  ArgumentList { "(" commaSep0<expression> ")" }
-
-  RecordField { Identifier ":" expression }
-  
-  LambdaParameterList {
-    Identifier ~lambda |
-    "(" commaSep0<LambdaParameter> ")"
-  }
-  
-  LambdaParameter { Identifier ~lambda TypeSignature? }
-
-  Literal {
-    Number |
-    @specialize[@name=BooleanLiteral]<Identifier, "true"> |
-    @specialize[@name=BooleanLiteral]<Identifier, "false"> |
-    @specialize[@name=NullLiteral]<Identifier, "null">
-  }
-
-  BinaryExpression {
-    expression !times multiplicative expression |
-    expression !plus additive expression |
-    expression !rel comparative expression
-  }
-
-  UltimateConditionalSyntax {
-    kw<"if"> split<TermBranch>
-  }
-
-  split[@name=Split]<branch> {
-    indent (
-      (branch | LetBinding)+ ElseClause? |
-      ElseClause
-    ) dedent |
-    branch |
-    ElseClause
-  }
-
-  LetBinding { kw<"let"> Identifier definition }
-
-  ElseClause { kw<"else"> rhs }
-
-  TermBranch {
-    simpleExpression ThenClause |
-    simpleExpression AndClause |
-    simpleExpression split<OperatorBranch>
-  }
-
-  PatternBranch { pattern (ThenClause | AndClause) }
-  
-  OperatorBranch {
-    kw<"is"> split<PatternBranch> |
-    splitOperator ~os split<TermBranch>
-  }
-
-  ThenClause { kw<"then"> expression }
-
-  AndClause { kw<"and"> split<TermBranch> }
-
-  pattern {
-    NamePattern { Identifier ~pat } |
-    // TuplePattern { "[" patternList<",", "]"> } |
-    // LiteralPattern { Literal } |
-    ClassPattern { Identifier ~pat ClassPatternParameters? } |
-    AsPattern { pattern kw<"as"> Identifier }
-  }
-
-  ClassPatternParameters { "(" (pattern ("," pattern)*)? ")" }
-
-  // patternList<sep, end> {
-  //   ((pattern sep)* pattern end) | end
-  // }
-
-  // Simple expressions are expressions without the Ultimate Conditional Syntax
-
-  simpleExpression {
-    Identifier |
-    Literal |
-    SimpleBinaryExpression |
-    TupleExpression
-  }
-
-  SimpleBinaryExpression {
-    simpleExpression !times multiplicative ~os simpleExpression |
-    simpleExpression !plus additive ~os simpleExpression |
-    simpleExpression !rel comparative ~os simpleExpression
-  }
-
-  splitOperator { multiplicative | additive | comparative }
-// }
-
-TupleExpression {
-  "[" (tupleElement* tupleLastElement | "]")
-}
-
-@context trackIndent from "./mlscript.tokens"
-
-@external tokens betterIndentation from "./mlscript.tokens" {
-  indent[@name=IndentDebug],
-  dedent[@name=DedentDebug],
-  keep[@name=KeepDebug]
-  // newline[@name=NewLineDebug]
+  userDefinedOp { $[<>|?:+-]+ }
 }

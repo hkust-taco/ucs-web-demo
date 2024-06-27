@@ -1,4 +1,5 @@
 import withMDX from "@next/mdx";
+import WebpackLezerPlugin from "unplugin-lezer/webpack";
 
 const applyMDX = withMDX();
 
@@ -12,6 +13,7 @@ const nextConfig = {
       test: /\.mls$/,
       use: "raw-loader",
     });
+    config.plugins.push(WebpackLezerPlugin());
     return config;
   }
 };

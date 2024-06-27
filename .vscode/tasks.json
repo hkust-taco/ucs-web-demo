@@ -1,0 +1,24 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "watch-mlscript-grammar",
+      "type": "shell",
+      "command": "npm run prebuild", // Replace with your desired command
+      "isBackground": true,
+      "problemMatcher": []
+    }
+  ],
+  "presentation": {
+    "reveal": "always",
+    "panel": "dedicated"
+  },
+  "watcher": {
+    "files": [
+      "lib/mlscript/parser/mlscript.grammar"
+    ],
+    "tasks": [
+      "watch-mlscript-grammar"
+    ]
+  }
+}

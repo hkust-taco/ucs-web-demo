@@ -1,7 +1,7 @@
 import { Compartment } from "@codemirror/state";
 import { EditorView } from "codemirror";
 import { MutableRefObject, useEffect } from "react";
-import { githubDark, githubLight } from "@uiw/codemirror-theme-github";
+import { githubDark, githubLight } from "./githubThemes";
 
 export const themeConfig = new Compartment();
 

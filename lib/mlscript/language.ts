@@ -7,10 +7,16 @@ let parserWithMetadata = parser.configure({
   props: [
     styleTags({
       "class trait module type fun let val": t.definitionKeyword,
-      "abstract virtual": t.keyword,
+      "abstract virtual extends": t.keyword,
       "if then else and": t.controlKeyword,
       Identifier: t.variableName,
+      TypeName: t.className,
+      TypeVariable: t.className,
+      VariableName: t.variableName,
       Boolean: t.bool,
+      BooleanLiteral: t.bool,
+      Variance: t.modifier,
+      ParameterName: t.special(t.variableName),
       Number: t.number,
       String: t.string,
       LineComment: t.lineComment,

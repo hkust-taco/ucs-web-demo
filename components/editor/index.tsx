@@ -1,7 +1,7 @@
 import { EditorState } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { useCallback, useEffect, useRef } from "react";
-// import { mlscript } from "@/lib/mlscript";
+import { mlscript } from "@/lib/mlscript";
 import {
   getCurrentTheme,
   useThemeAutoSwitch,
@@ -32,7 +32,7 @@ export function EditorPanelContent({ onRun }: EditorPanelContentProps) {
       extensions: [
         basicSetup,
         keymap.of([indentWithTab]),
-        // mlscript(), // It's broken for now. :-(
+        mlscript(), // It's broken for now. :-(
         getCurrentTheme(),
       ],
     });
@@ -70,7 +70,7 @@ export function EditorPanelContent({ onRun }: EditorPanelContentProps) {
       });
       onRun?.(example.source);
     },
-    [showDialog, onRun]
+    [onRun]
   );
   // const appendExample = useAppendExample();
   return (
