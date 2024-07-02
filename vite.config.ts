@@ -18,4 +18,10 @@ export default defineConfig({
       "@/lib": path.resolve(rootPath, "./lib"),
     },
   },
+  define: {
+    "process.env.VITEST":
+      process.env.VITEST === undefined
+        ? undefined
+        : JSON.stringify(process.env.VITEST),
+  },
 });

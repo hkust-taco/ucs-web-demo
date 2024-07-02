@@ -1,17 +1,56 @@
 @precedence {
+  // Types
   typeApplication,
+  functionType @right,
   intersection @left,
   union @left,
-  call
+  // Patterns
+  as @left,
+  // Expressions
+  member,
+  call,
+  prefix,
+  exp @left,
+  times @left,
+  plus @left,
+  plusRight @right,
+  colon @left, // starts with : but not ends with :
+  cons @right, // ::
+  shift @left,
+  rel @left,
+  equal @left,
+  bitAnd @left,
+  bitXor @left,
+  bitOr @left,
+  and @left,
+  or @left,
+  function @right,
+  // ternary @right,
+  // assign @right,
+  // comma @left,
+  // statement @cut,
+  // predicate
+  comma @left,
+  of @left,
+
+  is @left,
+  ucsAnd @left,
+  then @left,
+  else @right,
+  ucs @cut
 }
 
-@top Program { topLevelDeclaration* }
+@top Program { body<topLevelDeclaration> }
 
 topLevelDeclaration {
   ClassDeclaration |
+  TraitDeclaration |
   ModuleDeclaration |
+  TypeDeclaration |
   FunctionDeclaration |
-  LetDeclaration
+  FunctionStubDeclaration |
+  LetDeclaration |
+  TopLevelExpression { expression }
 }
 
 ClassDeclaration {
@@ -20,6 +59,24 @@ ClassDeclaration {
   TypeName
   TypeParameterList?
   ClassParameterList?
+  TypeAnnotation?
+  ExtendsClause?
+  ClassBody?
+}
+
+ClassBody {
+  "{" (indent sequence<ClassMember> dedent newline)? "}"
+}
+
+ClassMember {
+  FunctionDeclaration |
+  LetDeclaration
+}
+
+TraitDeclaration {
+  kw<"trait">
+  TypeName
+  TypeParameterList?
   ExtendsClause?
 }
 
@@ -29,7 +86,13 @@ ModuleDeclaration {
   ExtendsClause?
 }
 
-ExtendsClause { kw<"extends"> type }
+TypeDeclaration {
+  kw<"type"> TypeName TypeParameterList? "=" type
+}
+
+ExtendsClause { kw<"extends"> SuperClassCall }
+
+SuperClassCall { TypeName TypeArgumentList? FunctionArgumentList?}
 
 FunctionDeclaration {
   kw<"fun"> UserDefinedOp? VariableName FunctionParameterList 
@@ -37,30 +100,56 @@ FunctionDeclaration {
   FunctionBody?
 }
 
+FunctionStubDeclaration {
+  kw<"declare"> kw<"fun"> UserDefinedOp? VariableName TypeAnnotation?
+}
+
 FunctionParameterList {
-  "(" commaSep0<FunctionParameter> ")"
+  "(" commaSep0<FunctionParameter TypeAnnotation?> ")"
 }
 
 FunctionParameter {
-  ParameterName TypeAnnotation?
+  ParameterName ~arrowName |
+  ParameterTuplePattern ~arrowTuple
 }
 
-FunctionBody { "=" expression }
+parameterPattern { ParameterName | ParameterTuplePattern }
 
-VariableName { identifier }
+ParameterTuplePattern {
+  "[" ~arrowTupleBegin
+  commaSep0<parameterPattern ~arrowTupleItem>
+  ~arrowTupleEnd "]"
+}
+
+FunctionBody { "=" (expression | BlockExpression) }
+
+BlockExpression {
+  indent sequence<blockExpressionItem> dedent
+}
+
+ContinuedExpression {
+  indent ~continuedExpression expression dedent
+}
+
+blockExpressionItem {
+  LetDeclaration |
+  expression
+}
+
+VariableName { identifier ~arrowName }
 
 UserDefinedOp { "(" userDefinedOp ")" }
 
 LetDeclaration {
-  kw<"let"> VariableName FunctionParameterList?
+  (kw<"let"> | kw<"val">) kw<"rec">?
+  UserDefinedOp?
+  VariableName FunctionParameterList?
   TypeAnnotation? FunctionBody
 }
 
 TypeName { identifier }
 
-TypeParameterList {
-  "[" commaSep1<TypeParameter> "]"
-}
+TypeParameterList { "[" commaSep1<TypeParameter> "]" }
 
 TypeParameter { Variance? TypeName }
 
@@ -68,30 +157,38 @@ Variance { kw<"in"> | kw<"out"> }
 
 ClassParameterList { "(" commaSep0<ClassParameter> ")" }
 
-ClassParameter {
-  kw<"val">? ParameterName TypeAnnotation
-}
+ClassParameter { kw<"val">? ParameterName TypeAnnotation }
 
 ParameterName { identifier }
 
 type[@isGroup=Type] {
   ThisType { kw<"this"> } |
+  BuiltinType { kw<"nothing"> | kw<"anything"> } |
   TypeName |
   TypeVariable |
   LiteralType { boolean | Number | String } |
-  ParenthesizedType { "(" type ")" } |
+  ParenthesizedType { "(" type ~arrowType ")" } |
   UnionType { type (!union unionOp type)+ } |
   TupleType { "[" commaSep0<type> "]" } |
-  RecordType |
+  RecordType { record<RecordTypeProperty> } |
   IntersectionType { type (!intersection intersectionOp type)+ } |
   TypeApplication { TypeName !typeApplication TypeArgumentList } |
-  ForallType { kw<"forall"> commaSep1<TypeVariable> "." type }
+  ForallType { kw<"forall"> commaSep1<TypeVariable> "." type } |
+  FunctionType { type !functionType arrowOp type } |
+  FunctionType { "(" (type ~arrowType ("," commaSep0<type>)?)? ")" !functionType arrowOp type }
 }
+
+arrowOp { "=>" | "->" }
 
 TypeVariable { "'" identifier }
 
-RecordType {
-  "{" commaSep0<PropertyName TypeAnnotation> "}"
+RecordTypeProperty { PropertyName TypeAnnotation }
+
+record<item> {
+  "{" (
+    commaSep0<item> |
+    indent sequence<item ","?> dedent newline
+  ) "}"
 }
 
 PropertyName { identifier }
@@ -100,52 +197,206 @@ TypeAnnotation { ":" type }
 
 TypeArgumentList[@dynamicPrecedence=1] { "[" commaSep0<type> "]" }
 
-expression[@isGroup=Expression] { simpleExpression }
+// Expressions
+// ===========
 
-simpleExpression {
-  Number |
-  String |
-  VariableName |
-  boolean |
-  kw<"this"> |
-  kw<"super"> |
-  CallExpression {
-    simpleExpression !call FunctionArgumentList
-  }
+expression[@isGroup=Expression] {
+  simpleExpression |
+  UltimateConditionalSyntax
 }
 
-FunctionArgumentList {
-  "(" commaSep0<simpleExpression> ")"
+// simple, but possible multiple line expressions
+simpleExpression {
+  AtomicExpression |
+  CallExpression |
+  CallOfExpression |
+  // Allow the right-hand side of a binary expression to be multiple lines.
+  BinaryExpression { binaryExpression<simpleExpression | ContinuedExpression> } |
+  UnaryExpression |
+  ParenthesizedExpression |
+  TupleExpression |
+  MemberExpression |
+  SimpleArrowFunction |
+  ArrowFunction
+}
+
+AtomicExpression { Number | String | VariableName | boolean | kw<"this"> | kw<"super"> }
+
+FunctionArgumentList { "(" commaSep0<simpleExpression> ")" }
+
+CallExpression { simpleExpression !call FunctionArgumentList }
+
+CallOfExpression { simpleExpression !of kw<"of"> callOfArugmentList }
+
+callOfArugmentList {
+  simpleExpression (!comma "," simpleExpression)*
+}
+
+TupleExpression {
+  "[" ~arrowTupleBegin
+  commaSep0<simpleExpression ~arrowTupleItem>
+  ~arrowTupleEnd "]"
+}
+
+MemberExpression { simpleExpression !member "." PropertyName}
+
+SimpleArrowFunction {
+  VariableName ~arrowName !function arrowFunctionBody
+}
+
+ArrowFunction[@dynamicPrecedence=1] {
+  FunctionParameterList !function arrowFunctionBody
+}
+
+arrowFunctionBody { "=>" (BlockExpression | expression) }
+
+binaryExpression<rhs> {
+  simpleExpression !exp ArithOp<"**"> ~operatorSplit rhs |
+  simpleExpression !times (divide | ArithOp<"%"> | ArithOp<"*">) ~operatorSplit rhs |
+  simpleExpression !plus plusMinus ~operatorSplit rhs |
+  simpleExpression !plusRight plusHeadRightOp ~operatorSplit rhs |
+  simpleExpression !cons ArithOp<"::"> ~operatorSplit rhs |
+  simpleExpression !shift BitOp<">>" ">"? | "<<"> ~operatorSplit rhs |
+  simpleExpression !rel (LessThan | CompareOp<"<=" | ">" "="?>) ~operatorSplit rhs |
+  simpleExpression !equal (CompareOp<"==" "="? | "!=" "="?> | UserDefinedOp { equalHeadOp }) ~operatorSplit rhs |
+  simpleExpression !bitOr BitOp { "|" } ~operatorSplit rhs |
+  simpleExpression !bitXor BitOp<"^"> ~operatorSplit rhs |
+  simpleExpression !bitAnd BitOp { "&" } ~operatorSplit rhs |
+  simpleExpression !and LogicOp<"&&"> ~operatorSplit rhs |
+  simpleExpression !or (LogicOp<"||" | "??"> | UserDefinedOp { barHeadOp }) ~operatorSplit rhs |
+  // temporary fix, merge expresison with splits later
+  simpleExpression !ucsAnd kw<"and"> ~operatorSplit rhs
+}
+
+UnaryExpression {
+  !prefix (LogicOp<"!"> | BitOp<"~"> | plusMinus) 
+  simpleExpression
+}
+
+ParenthesizedExpression {
+  "(" expression ")" |
+  "(" indent expression (dedent newline ")" | ")" dedent)
 }
 
 kw<term> { @specialize[@name={term}]<identifier, term> }
 
-commaSep0<content> {
-  "" | content ("," content?)*
-}
+ckw<term> { @extend[@name={term}]<identifier, term> }
 
-commaSep1<content> {
-  content ("," content)*
-}
+commaSep0<content> { "" | content ("," content?)* }
+
+commaSep1<content> { content ("," content)* }
 
 unionOp[@name=LogicOp] { "|" }
 
 intersectionOp[@name=LogicOp] { "&" }
 
+plusMinus { ArithOp<"+" | "-"> }
+
 boolean { @specialize[@name=BooleanLiteral]<identifier, "true" | "false"> }
 
-@skip { spaces | newline }
-
-@skip {} {
-  // String[isolate] {
-  String { // Comment this when not using lezer-playground
-    '"' (stringContentDouble | Escape)* ('"' | "\n")
+UltimateConditionalSyntax {
+  kw<"if"> (TermSplit | TermBranch)
+  topLevelElseClause[@dynamicPrecedence=1] {
+    (!else newlineBeforeElse ElseClause)?
   }
 }
 
+TermSplit { indent split<TermBranch> dedent }
+
+TermBranch {
+  binaryExpression<TermSplit> | 
+  simpleExpression (
+    ThenClause |
+    IsClause | 
+    Conjunction |
+    SplitBeforeOperator { indent split<OperatorBranch> dedent }
+  )
+}
+
+OperatorBranch { userDefinedOp TermBranch }
+
+ThenClause { // I don't know if ~else here is correct.
+  kw<"then"> (simpleExpression (!else ElseClause)? | BlockExpression)
+}
+
+IsClause { ckw<"is"> (PatternSplit | PatternBranch) }
+
+PatternSplit { indent split<PatternBranch> dedent }
+
+PatternBranch { pattern (ThenClause | Conjunction) }
+
+Conjunction { kw<"and"> (TermSplit | TermBranch) }
+
+ElseClause { kw<"else"> (expression | BlockExpression) }
+
+split<branch> {
+  ElseClause? |
+  (branch | LetDeclaration) (separator (branch | LetDeclaration)?)* (separator ElseClause)?
+}
+
+pattern[@isGroup=Pattern] {
+  ConstructorPattern { TypeName ("(" commaSep0<pattern> ")")? } |
+  AsPattern { pattern !as kw<"as"> VariableName } |
+  TuplePattern { "[" commaSep0<pattern> "]" } |
+  LiteralPattern { Number | String | boolean }
+}
+
+separator { newline | blankLineStart }
+
+blankLine { blankLineStart newline }
+
+newlineSep1<item> {
+  newline? blankLine* // <-- temporary fix for leading comment lines in indented blocks
+  item (separator item?)*
+}
+
+sequence<item> {
+  "" |
+  newline? blankLine* // <-- temporary fix for leading comment lines in indented blocks
+  item (separator item?)*
+}
+
+// Remember to provide a newline or an indent before this.
+body<item> {
+  blankLineStart* newline? (item (bodySep item)* blankLineStart*)?
+}
+
+bodySep { blankLineStart* newline ~elseNewline }
+
+@skip { spaces | LineComment | BlockComment }
+
+@skip {} {
+  String[isolate] {
+    '"' (stringContentDouble | Escape)* ('"' | "\n")
+  }
+  BlockComment[isolate] {
+    "/*" (blockCommentContent | blockCommentNewline)* blockCommentEnd
+  }
+}
+
+@local tokens {
+  blockCommentEnd { "*/" }
+  blockCommentNewline { "\n" }
+  @else blockCommentContent
+}
+
+@context trackIndent from "./indentation"
+
+@external tokens indentation from "./indentation" {
+  indent
+  dedent
+  newline
+  newlineBeforeElse
+  blankLineStart
+}
+
 @tokens {
+  LineComment[isolate] { "//" ![\n]* }
+
+  @precedence { "/*", LineComment, divide, userDefinedOp }
+
   spaces[@export] { $[\u0009 \u000b\u00a0\u1680\u2000-\u200a\u202f\u205f\u3000\ufeff]+ }
-  newline[@export] { $[\r\n\u2028\u2029] }
+  // newline[@export] { $[\r\n\u2028\u2029] }
   identifierChar { @asciiLetter | $[_$\u{a1}-\u{10ffff}] }
   word { identifierChar (identifierChar | @digit)* }
   identifier { word "'"* }
@@ -156,6 +407,22 @@ boolean { @specialize[@name=BooleanLiteral]<identifier, "true" | "false"> }
 
   hex { @digit | $[a-fA-F] }
 
+  ArithOp<expr> { expr }
+  LogicOp<expr> { expr }
+  BitOp<expr> { expr }
+  CompareOp<expr> { expr }
+  UpdateOp<expr> { expr }
+
+  LessThan[@name=CompareOp] { "<" }
+  
+  "(" ")" "[" "]" "{" "}" "<" ">"
+
+  "." "," ":"
+
+  @precedence { "*", ArithOp }
+
+  divide[@name=ArithOp] { "/" }
+
   Number {
     (@digit ("_" | @digit)* ("." ("_" | @digit)*)? | "." @digit ("_" | @digit)*)
       (("e" | "E") ("+" | "-")? ("_" | @digit)+)? |
@@ -164,7 +431,7 @@ boolean { @specialize[@name=BooleanLiteral]<identifier, "true" | "false"> }
     "0b" $[01_]+ "n"? |
     "0o" $[0-7_]+ "n"?
   }
-  @precedence { Number "." }
+  @precedence { Number, "." }
 
   Escape {
     "\\" ("x" hex hex | "u" ("{" hex+ "}" | hex hex hex hex) | ![xu])
@@ -172,5 +439,25 @@ boolean { @specialize[@name=BooleanLiteral]<identifier, "true" | "false"> }
 
   stringContentDouble { ![\\\n"]+ }
 
-  userDefinedOp { $[<>|?:+-]+ }
+  equalHeadOp { "=" opSeqNotEndsWithColon }
+
+  @precedence { CompareOp<"==" "="? | "!=" "="?>, "=>", equalHeadOp }
+
+  barHeadOp { "|" opSeqNotEndsWithColon }
+
+  @precedence { LogicOp<"||" | "??">, barHeadOp, "|" }
+
+  plusHeadRightOp { "+" opSeqEndsWithColon } // starts with + and ends with :
+
+  @precedence { plusHeadRightOp, ArithOp<"+" | "-"> }
+
+  opSeqEndsWithColon { opChar* ":" }
+
+  opSeqNotEndsWithColon { (opChar* opCharNoColon)? }
+
+  opCharNoColon { $[<>|?!+\-*/=#@] }
+
+  opChar { opCharNoColon | ":" }
+
+  userDefinedOp { opChar+ }
 }
