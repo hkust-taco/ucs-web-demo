@@ -95,9 +95,10 @@ ExtendsClause { kw<"extends"> SuperClassCall }
 SuperClassCall { TypeName TypeArgumentList? FunctionArgumentList?}
 
 FunctionDeclaration {
-  kw<"fun"> UserDefinedOp? VariableName FunctionParameterList 
-  TypeAnnotation?
-  FunctionBody?
+  kw<"fun"> UserDefinedOp? VariableName (
+    (FunctionParameterList TypeAnnotation? FunctionBody)? | // implementation
+    TypeAnnotation? // declaration
+  )
 }
 
 FunctionStubDeclaration {
@@ -173,7 +174,7 @@ type[@isGroup=Type] {
   RecordType { record<RecordTypeProperty> } |
   IntersectionType { type (!intersection intersectionOp type)+ } |
   TypeApplication { TypeName !typeApplication TypeArgumentList } |
-  ForallType { kw<"forall"> commaSep1<TypeVariable> "." type } |
+  ForallType { ckw<"forall"> commaSep1<TypeVariable> "." type } |
   FunctionType { type !functionType arrowOp type } |
   FunctionType { "(" (type ~arrowType ("," commaSep0<type>)?)? ")" !functionType arrowOp type }
 }
@@ -335,20 +336,21 @@ split<branch> {
 }
 
 pattern[@isGroup=Pattern] {
-  ConstructorPattern { TypeName ("(" commaSep0<pattern> ")")? } |
+  ConstructorPattern { TypeName "(" commaSep0<pattern> ")" } |
   AsPattern { pattern !as kw<"as"> VariableName } |
   TuplePattern { "[" commaSep0<pattern> "]" } |
-  LiteralPattern { Number | String | boolean }
+  LiteralPattern { Number | String | boolean } |
+  VariablePattern { identifier }
 }
 
 separator { newline | blankLineStart }
 
 blankLine { blankLineStart newline }
 
-newlineSep1<item> {
-  newline? blankLine* // <-- temporary fix for leading comment lines in indented blocks
-  item (separator item?)*
-}
+// newlineSep1<item> {
+//   newline? blankLine* // <-- temporary fix for leading comment lines in indented blocks
+//   item (separator item?)*
+// }
 
 sequence<item> {
   "" |
@@ -401,9 +403,7 @@ bodySep { blankLineStart* newline ~elseNewline }
   word { identifierChar (identifierChar | @digit)* }
   identifier { word "'"* }
 
-  @precedence { spaces, newline, identifier }
-
-  @precedence { spaces, newline, word }
+  @precedence { spaces, identifier }
 
   hex { @digit | $[a-fA-F] }
 
@@ -411,15 +411,12 @@ bodySep { blankLineStart* newline ~elseNewline }
   LogicOp<expr> { expr }
   BitOp<expr> { expr }
   CompareOp<expr> { expr }
-  UpdateOp<expr> { expr }
 
   LessThan[@name=CompareOp] { "<" }
   
   "(" ")" "[" "]" "{" "}" "<" ">"
 
   "." "," ":"
-
-  @precedence { "*", ArithOp }
 
   divide[@name=ArithOp] { "/" }
 

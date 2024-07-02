@@ -6,9 +6,10 @@ import { styleTags, tags as t } from "@lezer/highlight";
 let parserWithMetadata = parser.configure({
   props: [
     styleTags({
-      "class trait module type fun let val": t.definitionKeyword,
+      "declare class trait module type fun let val": t.definitionKeyword,
       "abstract virtual extends": t.keyword,
       "if then else and is rec": t.controlKeyword,
+      BuildinType: t.special(t.typeName),
       Identifier: t.variableName,
       TypeName: t.className,
       TypeVariable: t.className,
@@ -16,7 +17,9 @@ let parserWithMetadata = parser.configure({
       Boolean: t.bool,
       BooleanLiteral: t.bool,
       Variance: t.modifier,
+      PropertyName: t.special(t.variableName),
       ParameterName: t.special(t.variableName),
+      VariablePattern: t.special(t.variableName),
       Number: t.number,
       String: t.string,
       LineComment: t.lineComment,

@@ -67,6 +67,7 @@ export const githubDarkInit = (options?: Partial<CreateThemeOptions>) => {
       { tag: [t.className, t.propertyName], color: '#d2a8ff' },
       { tag: [t.variableName, t.attributeName, t.number, t.operator], color: '#79c0ff' },
       { tag: t.special(t.variableName), color: '#79c0ff', fontStyle: 'italic' }, // for arguments
+      { tag: t.special(t.typeName), color: '#79c0ff', fontStyle: 'italic' }, // for built-in types
       { tag: t.modifier, color: '#79c0ff' },
       { tag: [t.keyword, t.typeName, t.typeOperator, t.typeName], color: '#ff7b72' },
       { tag: [t.string, t.meta, t.regexp], color: '#a5d6ff' },
