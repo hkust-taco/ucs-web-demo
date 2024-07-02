@@ -1,6 +1,9 @@
 import type { JavaScriptType } from "./types";
 import inspect from "object-inspect";
 
+// Stupid fix for "object-inspect"'s implementation.
+globalThis.global = globalThis;
+
 export type TaskInput = {
   id: string;
   code: string;

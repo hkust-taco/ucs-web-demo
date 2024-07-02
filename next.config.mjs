@@ -1,5 +1,5 @@
 import withMDX from "@next/mdx";
-import WebpackLezerPlugin from "unplugin-lezer/webpack";
+import WebpackLezerPlugin from "@chengluyu/unplugin-lezer/webpack";
 
 const applyMDX = withMDX();
 

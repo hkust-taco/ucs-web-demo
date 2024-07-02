@@ -1,5 +1,5 @@
 import { LRLanguage } from "@codemirror/language";
-import { parser } from "./parser";
+import { parser } from "./mlscript.grammar";
 // import { foldNodeProp, foldInside, indentNodeProp } from "@codemirror/language";
 import { styleTags, tags as t } from "@lezer/highlight";
 

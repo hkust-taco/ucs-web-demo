@@ -27,8 +27,9 @@ export function EvaluationResult({}: EvaluationResultProps) {
   // Install a worker to run the code.
   useEffect(() => {
     if (workerRef.current !== null) return;
-    console.log(new URL("./run.worker.ts", import.meta.url));
-    const worker = new Worker(new URL("./run.worker.ts", import.meta.url));
+    const worker = new Worker(new URL("./run.worker.ts", import.meta.url), {
+      type: "module",
+    });
     worker.onmessage = (event: MessageEvent<TaskResult>) => {
       console.log("Received a message from the worker.", event.data);
       finishTask(event.data);

@@ -1,14 +1,14 @@
 import { z } from "zod";
-import json from "./JSON.mls";
-import zipWith from "./zipWith.mls";
-import mapPartition from "./mapPartition.mls";
-import binarySearchTree from "./BinarySearchTree.mls";
-import calculator from "./Calculator.mls";
-import lispInterpreter from "./LispInterpreter.mls";
-import variousSplits from "./variousSplits.mls";
-import split2 from "./split-2.mls";
-import sign from "./sign.mls";
-import guards from "./guards.mls";
+// import json from "./JSON.mls?raw";
+import zipWith from "./zipWith.mls?raw";
+import mapPartition from "./mapPartition.mls?raw";
+import binarySearchTree from "./BinarySearchTree.mls?raw";
+import calculator from "./Calculator.mls?raw";
+import lispInterpreter from "./LispInterpreter.mls?raw";
+import variousSplits from "./variousSplits.mls?raw";
+import split2 from "./split-2.mls?raw";
+import sign from "./sign.mls?raw";
+import guards from "./guards.mls?raw";
 
 export const ExampleSchema = z.object({
   group: z.string().default("user"),

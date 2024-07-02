@@ -1,29 +1,34 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "../ui/button";
+import { ErrorBoundaryProps } from "react-error-boundary";
 
-export type EditorErrorDisplayProps = {
-  error: Error;
-  reset: () => void;
-};
+export type EditorErrorDisplayProps = Parameters<
+  NonNullable<ErrorBoundaryProps["fallbackRender"]>
+>[0];
 
-export function EditorErrorDisplay({ error, reset }: EditorErrorDisplayProps) {
+export function EditorErrorDisplay({
+  error,
+  resetErrorBoundary: reset,
+}: EditorErrorDisplayProps) {
   const [crashedAt, setCrashedAt] = useState<Date | null>(null);
   useEffect(() => {
     setCrashedAt(new Date());
   }, []);
   const stack = useMemo(() => {
-    return error.stack
-      ?.split("\n")
-      .filter((line) => line.includes(" at"))
-      .slice(0, 10)
-      .map((line) => {
-        const result = line.match(/^\s*at\s+([\w\.]+)\s+(\(.+\))s*$/);
-        if (result === null) {
-          return line;
-        } else {
-          return { name: result[1], location: result[2] };
-        }
-      });
+    return error instanceof Error
+      ? error.stack
+          ?.split("\n")
+          .filter((line) => line.includes(" at"))
+          .slice(0, 10)
+          .map((line) => {
+            const result = line.match(/^\s*at\s+([\w\.]+)\s+(\(.+\))s*$/);
+            if (result === null) {
+              return line;
+            } else {
+              return { name: result[1], location: result[2] };
+            }
+          })
+      : null;
   }, [error]);
   return (
     <div className="w-full h-full flex flex-col justify-center items-center gap-4">
