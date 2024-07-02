@@ -7,6 +7,7 @@ import { EditorState } from "@codemirror/state";
 import { EditorView, basicSetup } from "codemirror";
 import { ReactNode, useEffect, useRef } from "react";
 import { StageSection } from "./StageSection";
+import { mlscript } from "@/lib/mlscript";
 
 export type SourceCodeDisplayProps = {
   caption: ReactNode;
@@ -25,6 +26,7 @@ export function SourceCodeDisplay({ caption, lines }: SourceCodeDisplayProps) {
         basicSetup,
         getCurrentTheme(),
         EditorState.readOnly.of(true),
+        mlscript(),
       ],
     });
     const editor = new EditorView({

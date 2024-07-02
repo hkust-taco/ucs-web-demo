@@ -8,7 +8,7 @@ let parserWithMetadata = parser.configure({
     styleTags({
       "class trait module type fun let val": t.definitionKeyword,
       "abstract virtual extends": t.keyword,
-      "if then else and": t.controlKeyword,
+      "if then else and is rec": t.controlKeyword,
       Identifier: t.variableName,
       TypeName: t.className,
       TypeVariable: t.className,

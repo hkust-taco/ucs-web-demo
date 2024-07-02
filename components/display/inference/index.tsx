@@ -10,6 +10,7 @@ import { useEffect, useRef } from "react";
 import { SectionCaption } from "../SectionCaption";
 import { ReportsSection } from "./ReportsSection";
 import { SectionDescription } from "../SectionDescription";
+import { mlscript } from "@/lib/mlscript";
 
 export type TypeInferenceContentProps = {
   types: StageResult<string> | null;
@@ -30,6 +31,7 @@ export function TypeInferenceContent({ types }: TypeInferenceContentProps) {
         basicSetup,
         getCurrentTheme(),
         EditorState.readOnly.of(true),
+        mlscript(),
       ],
     });
     const editor = new EditorView({
