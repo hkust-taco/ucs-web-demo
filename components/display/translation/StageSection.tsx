@@ -14,7 +14,7 @@ export function StageSection({
 }: StageSectionProps) {
   return (
     <section>
-      <h3 className="text font-bold mb-2 text-muted-foreground uppercase">
+      <h3 className="text-sm font-bold mb-1 text-muted-foreground uppercase">
         {caption}
       </h3>
       <div

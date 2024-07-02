@@ -1,5 +1,4 @@
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
@@ -10,15 +9,15 @@ import {
 } from "@/components/ui/select";
 import { Source } from "@/lib/source";
 import { type Compilation } from "@mlscript/ucs-demo-build";
-import { ChevronLeftIcon, ChevronRightIcon, InfoIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import EmptyContent from "../EmptyContent";
+import { SectionDescription } from "../SectionDescription";
 import { CoreSplitDisplay } from "./CoreSplitDisplay";
 import { NormalizedTermDisplay } from "./NormalizedTermDisplay";
-import { SourceSplitDisplay } from "./SourceSplitDisplay";
 import { SourceCodeDisplay } from "./SourceCodeDisplay";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import { SourceSplitDisplay } from "./SourceSplitDisplay";
 
 export type TranslationContentProps = {
   sourceCode: string | null;
@@ -103,107 +102,121 @@ export function TranslationContent({
     setSelectedTranslationResultId(translationResultList[nextIndex].id);
   }, [selectedTranslationResult, translationResultList]);
   return (
-    <div className="w-full h-full flex flex-col gap-4">
-      <header className="flex-shrink-0 flex flex-col gap-4">
-        {translationResultList.length === 0 ? (
-          <Alert>
-            <InfoIcon className="h-4 w-4" />
-            <AlertTitle>No Translation Results</AlertTitle>
-            <AlertDescription>
-              Click &ldquo;Compile & Run&rdquo; button to see the translation
-              stages. If there are multiple UCS expressions, select the one you
-              want to see in the dropdown.
-            </AlertDescription>
-          </Alert>
-        ) : null}
-        <div className="flex flex-row gap-4 items-center">
-          <Label className="flex-shrink-0">Show UCS term</Label>
-          <Button
-            className="select-none flex-shrink-0"
-            variant="outline"
-            onClick={selectPrevious}
-            disabled={selectedTranslationResult?.index === 0}
-          >
-            <ChevronLeftIcon className="h-4 w-4" />
-            <span>Previous</span>
-          </Button>
-          <Select
-            value={selectedTranslationResultId}
-            onValueChange={setSelectedTranslationResultId}
-          >
-            <SelectTrigger className="flex-1">
-              <SelectValue
-                id="run"
-                className="select-none"
-                placeholder="Please select a UCS expression to show."
-              />
-            </SelectTrigger>
-            <SelectContent>
-              {translationResultList.map((translationResult) => (
-                <SelectItem
-                  key={translationResult.id}
-                  value={translationResult.id}
+    <div className="w-full h-full flex flex-col gap-3">
+      {translationResultList.length === 0 ? (
+        <EmptyContent>
+          Please click &ldquo;Compile & Run&rdquo; button to View the
+          intermediate results of each stage of UCS translation. These results
+          will be displayed in the form of syntax trees. If there are multiple
+          UCS expressions, select the one you want to see in the dropdown
+          select.
+        </EmptyContent>
+      ) : (
+        <>
+          <header className="flex-shrink-0 flex flex-col gap-1.5">
+            {/* <SectionDescription>
+              You can check here how each UCS term is translated. If there is
+              more than one UCS term, you can use the selector below to choose
+              the UCS term you want to view.
+            </SectionDescription> */}
+            {translationResultList.length > 0 ? (
+              <div className="flex flex-row gap-4 items-center">
+                {/* <Label className="flex-shrink-0">Show UCS term</Label> */}
+                <Button
+                  className="select-none flex-shrink-0"
+                  variant="outline"
+                  onClick={selectPrevious}
+                  disabled={selectedTranslationResult?.index === 0}
                 >
-                  from{" "}
-                  <LocationDisplay
-                    location={translationResult?.location?.[0]}
-                  />{" "}
-                  to{" "}
-                  <LocationDisplay
-                    location={translationResult?.location?.[1]}
+                  <ChevronLeftIcon className="h-4 w-4" />
+                  <span>Previous</span>
+                </Button>
+                <Select
+                  value={selectedTranslationResultId}
+                  onValueChange={setSelectedTranslationResultId}
+                >
+                  <SelectTrigger className="flex-1">
+                    <SelectValue
+                      id="run"
+                      className="select-none"
+                      placeholder="Please select a UCS expression to show."
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {translationResultList.map(
+                      (translationResult, index, list) => (
+                        <SelectItem
+                          key={translationResult.id}
+                          value={translationResult.id}
+                        >
+                          <span>
+                            UCS expression from{" "}
+                            <LocationDisplay
+                              location={translationResult?.location?.[0]}
+                            />{" "}
+                            to{" "}
+                            <LocationDisplay
+                              location={translationResult?.location?.[1]}
+                            />
+                          </span>
+                          <span className="ml-2 text-muted-foreground">
+                            ({index + 1} of {list.length})
+                          </span>
+                        </SelectItem>
+                      )
+                    )}
+                    {translationResultList.length === 0 ? (
+                      <SelectItem value="null" disabled>
+                        No UCS expressions to show.
+                      </SelectItem>
+                    ) : null}
+                  </SelectContent>
+                </Select>
+                <Button
+                  className="select-none flex-shrink-0"
+                  variant="outline"
+                  onClick={selectNext}
+                  disabled={
+                    selectedTranslationResult?.index ===
+                    translationResultList.length - 1
+                  }
+                >
+                  <span>Next</span>
+                  <ChevronRightIcon className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : null}
+          </header>
+          <ScrollArea className="flex-1 min-h-0">
+            <div className="flex flex-col gap-2.5">
+              {selectedTranslationResult === undefined ? undefined : (
+                <>
+                  <SourceCodeDisplay
+                    caption="Source Code"
+                    lines={selectedTranslationResult.source?.split("\n") ?? []}
                   />
-                </SelectItem>
-              ))}
-              {translationResultList.length === 0 ? (
-                <SelectItem value="null" disabled>
-                  No UCS expressions to show.
-                </SelectItem>
-              ) : null}
-            </SelectContent>
-          </Select>
-          <Button
-            className="select-none flex-shrink-0"
-            variant="outline"
-            onClick={selectNext}
-            disabled={
-              selectedTranslationResult?.index ===
-              translationResultList.length - 1
-            }
-          >
-            <span>Next</span>
-            <ChevronRightIcon className="h-4 w-4" />
-          </Button>
-        </div>
-      </header>
-      <Separator />
-      <ScrollArea className="flex-1 min-h-0">
-        <div className="flex flex-col gap-4">
-          {selectedTranslationResult === undefined ? undefined : (
-            <>
-              <SourceCodeDisplay
-                caption="Source Code"
-                lines={selectedTranslationResult.source?.split("\n") ?? []}
-              />
-              <SourceSplitDisplay
-                caption="Stage 0: Parsing"
-                topLevelSplit={selectedTranslationResult.transformed}
-              />
-              <CoreSplitDisplay
-                caption="Stage 1: Desugaring"
-                topLevelSplit={selectedTranslationResult.desugared}
-              />
-              <NormalizedTermDisplay
-                caption="Stage 2: Normalization"
-                topLevelTerm={selectedTranslationResult.normalized}
-              />
-              <NormalizedTermDisplay
-                caption="Stage 3: Post-processing"
-                topLevelTerm={selectedTranslationResult.postProcessed}
-              />
-            </>
-          )}
-        </div>
-      </ScrollArea>
+                  <SourceSplitDisplay
+                    caption="Stage 0: Parsing"
+                    topLevelSplit={selectedTranslationResult.transformed}
+                  />
+                  <CoreSplitDisplay
+                    caption="Stage 1: Desugaring"
+                    topLevelSplit={selectedTranslationResult.desugared}
+                  />
+                  <NormalizedTermDisplay
+                    caption="Stage 2: Normalization"
+                    topLevelTerm={selectedTranslationResult.normalized}
+                  />
+                  <NormalizedTermDisplay
+                    caption="Stage 3: Post-processing"
+                    topLevelTerm={selectedTranslationResult.postProcessed}
+                  />
+                </>
+              )}
+            </div>
+          </ScrollArea>
+        </>
+      )}
     </div>
   );
 }
@@ -215,7 +228,7 @@ type LocationDisplayProps = {
 function LocationDisplay({ location }: LocationDisplayProps) {
   return location ? (
     <span className="font-semibold underline underline-offset-2">
-      ln {location[0]} col {location[1]}
+      Ln {location[0]} Col {location[1]}
     </span>
   ) : (
     <span className="text-muted-foreground">unknown location</span>

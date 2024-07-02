@@ -60,7 +60,7 @@ export function TypeInferenceContent({ types }: TypeInferenceContentProps) {
       }}
     >
       <section className="flex flex-col gap-1.5 w-full overflow-hidden">
-        <SectionCaption>Inferred Types</SectionCaption>
+        {/* <SectionCaption>Inferred Types</SectionCaption> */}
         <SectionDescription>
           The type inference and check results of the code on the left side will
           be displayed here.

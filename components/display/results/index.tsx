@@ -3,7 +3,6 @@ import { ListVideoIcon, OctagonXIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SectionCaption } from "../SectionCaption";
 import { ReportsSection } from "../inference/ReportsSection";
-import { GeneratedCode } from "./GeneratedCode";
 import { TaskSelect } from "./TaskSelect";
 import { VariableTable } from "./VariableTable";
 import type { TaskResult } from "./run.worker";
@@ -65,12 +64,7 @@ export function EvaluationResult({}: EvaluationResultProps) {
     <div
       className="w-full h-full grid gap-4"
       style={{
-        gridTemplateRows:
-          selectedTask === null ||
-          selectedTask === undefined ||
-          selectedTask.type === "failure"
-            ? "auto minmax(0, 1fr)"
-            : "auto minmax(0, 1fr) minmax(0, 1fr)",
+        gridTemplateRows: "auto minmax(0, 1fr)",
         gridTemplateColumns: "1fr",
       }}
     >
@@ -90,46 +84,33 @@ export function EvaluationResult({}: EvaluationResultProps) {
 
       {selectedTask === null ||
       selectedTask === undefined ? null : selectedTask.type === "success" ? (
-        <>
-          <section className="flex flex-col gap-1.5 w-full overflow-hidden">
-            <SectionCaption>Code Execution Result</SectionCaption>
-            <p className="text-sm text-muted-foreground mb-1.5">
-              Compiling and running the program on the left side yields the
-              following global variables and functions.
-            </p>
-            <main className="min-h-0 flex-1 w-full">
-              {selectedTask?.error ? (
-                <div className="flex flex-col border border-rose-900 rounded-md overflow-hidden">
-                  <header className="px-2  py-1 bg-rose-900 text-primary flex flex-row items-center">
-                    <OctagonXIcon className="w-4 h-4 mr-1" />
-                    <span className="font-semibold uppercase">Error</span>
-                  </header>
-                  <div className="p-2 text-primary">
-                    <p>{selectedTask.error.message}</p>
-                    {selectedTask.error.stack ? (
-                      <StackTraceDisplay
-                        stack={selectedTask.error.stack.split("\n")}
-                      />
-                    ) : null}
-                  </div>
+        <section className="flex flex-col gap-1.5 w-full overflow-hidden">
+          {/* <SectionCaption>Code Execution Result</SectionCaption> */}
+          <p className="text-sm text-muted-foreground mb-1.5">
+            Compiling and running the program on the left side yields the
+            following global variables and functions.
+          </p>
+          <main className="min-h-0 flex-1 w-full">
+            {selectedTask?.error ? (
+              <div className="flex flex-col border border-rose-900 rounded-md overflow-hidden">
+                <header className="px-2 py-1 bg-rose-900 text-primary flex flex-row items-center">
+                  <OctagonXIcon className="w-4 h-4 mr-1" />
+                  <span className="font-semibold uppercase">Error</span>
+                </header>
+                <div className="p-2 text-primary">
+                  <p>{selectedTask.error.message}</p>
+                  {selectedTask.error.stack ? (
+                    <StackTraceDisplay
+                      stack={selectedTask.error.stack.split("\n")}
+                    />
+                  ) : null}
                 </div>
-              ) : (
-                <VariableTable variables={selectedTask?.variables ?? []} />
-              )}
-            </main>
-          </section>
-
-          <section className="flex flex-col gap-1.5 w-full overflow-hidden">
-            <SectionCaption>Generated JavaScript Code</SectionCaption>
-            <p className="text-sm text-muted-foreground mb-1.5">
-              The output of the above code is obtained by evaluating the code
-              generated below.
-            </p>
-            <main className="min-h-0 flex-1 w-full">
-              <GeneratedCode code={selectedTask?.code} />
-            </main>
-          </section>
-        </>
+              </div>
+            ) : (
+              <VariableTable variables={selectedTask?.variables ?? []} />
+            )}
+          </main>
+        </section>
       ) : (
         <>
           <ReportsSection

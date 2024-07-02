@@ -1,5 +1,5 @@
 import { z } from "zod";
-// import json from "./JSON.mls?raw";
+import json from "./JSON.mls?raw";
 import zipWith from "./zipWith.mls?raw";
 import mapPartition from "./mapPartition.mls?raw";
 import binarySearchTree from "./BinarySearchTree.mls?raw";
@@ -13,71 +13,88 @@ import guards from "./guards.mls?raw";
 export const ExampleSchema = z.object({
   group: z.string().default("user"),
   name: z.string(),
+  description: z.string().default(""),
   source: z.string().default(""),
   builtin: z.boolean().default(false),
 });
 
 export type Example = z.output<typeof ExampleSchema>;
 
-export const examples: Example[] = [
+export const advancedExamples: Example[] = [
   {
-    group: "Section 1",
-    name: "conditional splits (1)",
-    source: variousSplits,
+    group: "Real-World Examples",
+    name: "JSON Parser",
+    description: "A full-fledged JSON parser.",
+    source: json,
     builtin: true,
   },
-  {
-    group: "Section 1",
-    name: "conditional splits (2)",
-    source: split2,
-    builtin: true,
-  },
-  {
-    group: "General",
-    name: "guards",
-    source: guards,
-    builtin: true,
-  },
-  {
-    group: "General",
-    name: "sign",
-    source: sign,
-    builtin: true,
-  },
-  {
-    group: "List",
-    name: "mapPartition",
-    source: mapPartition,
-    builtin: true,
-  },
-  {
-    group: "List",
-    name: "zipWith",
-    source: zipWith,
-    builtin: true,
-  },
-  // {
-  //   group: "Real-World Examples",
-  //   name: "JSON Parser",
-  //   source: json,
-  //   builtin: true,
-  // },
   {
     group: "Real-World Examples",
     name: "Binary Search Tree",
+    description: "A binary search tree implementation.",
     source: binarySearchTree,
     builtin: true,
   },
   {
     group: "Real-World Examples",
     name: "Calculator",
+    description: "A calculator of arithmetic expressions",
     source: calculator,
     builtin: true,
   },
   {
     group: "Real-World Examples",
     name: "Lisp Interpreter",
+    description: "A simple Lisp interpreter.",
     source: lispInterpreter,
     builtin: true,
   },
 ];
+
+export const basicExamples: Example[] = [
+  {
+    group: "Section 1",
+    name: "conditional splits – 1",
+    description: "The first example in the paper.",
+    source: variousSplits,
+    builtin: true,
+  },
+  {
+    group: "Section 1",
+    name: "conditional splits – 2",
+    description: "The second example in the paper.",
+    source: split2,
+    builtin: true,
+  },
+  {
+    group: "General",
+    name: "guards",
+    description:
+      "This example shows how UCS can easily achieve pattern matching guards.",
+    source: guards,
+    builtin: true,
+  },
+  {
+    group: "General",
+    name: "sign",
+    description: "Determine the sign of a number with operator splits of UCS.",
+    source: sign,
+    builtin: true,
+  },
+  {
+    group: "List",
+    name: "mapPartition",
+    description: "An implementation of `mapPartition` function on lists.",
+    source: mapPartition,
+    builtin: true,
+  },
+  {
+    group: "List",
+    name: "zipWith",
+    description: "An implementation of `zipWith` function on lists.",
+    source: zipWith,
+    builtin: true,
+  },
+];
+
+export const examples: Example[] = [...basicExamples, ...advancedExamples];
