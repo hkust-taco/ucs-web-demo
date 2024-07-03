@@ -1,13 +1,11 @@
-import { Label } from "@/components/ui/label";
-import { ListVideoIcon, OctagonXIcon } from "lucide-react";
+import { OctagonXIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { SectionCaption } from "../SectionCaption";
+import { StackTraceDisplay } from "../StackTraceDisplay";
 import { ReportsSection } from "../inference/ReportsSection";
-import { TaskSelect } from "./TaskSelect";
 import { VariableTable } from "./VariableTable";
 import type { TaskResult } from "./run.worker";
 import { useTasks } from "./useTasks";
-import { StackTraceDisplay } from "../StackTraceDisplay";
+import EmptyContent from "../EmptyContent";
 
 export type EvaluationResultProps = {};
 
@@ -61,29 +59,15 @@ export function EvaluationResult({}: EvaluationResultProps) {
   }, [latestTask]);
 
   return (
-    <div
-      className="w-full h-full grid gap-4"
-      style={{
-        gridTemplateRows: "auto minmax(0, 1fr)",
-        gridTemplateColumns: "1fr",
-      }}
-    >
-      <header className="flex flex-row gap-2 items-center">
-        <Label
-          className="flex-shrink-0 flex flex-row items-center"
-          htmlFor="run"
-        >
-          <ListVideoIcon className="w-4 h-4 mr-1" />
-          <span>Select Runs</span>
-        </Label>
-        <TaskSelect
-          selectedTask={selectedTaskId ?? latestTask?.id}
-          onSelectTask={onSelectTask}
-        />
-      </header>
-
-      {selectedTask === null ||
-      selectedTask === undefined ? null : selectedTask.type === "success" ? (
+    <div className="w-full h-full grid gap-4">
+      {selectedTask === null || selectedTask === undefined ? (
+        <EmptyContent>
+          Please click the &ldquo;Compile & Run&rdquo; button on the left. The
+          MLscript program on the left will be transpiled to a JavaScript
+          function, which will be evaluated and displayed here. Any errors or
+          warnings will be shown together.
+        </EmptyContent>
+      ) : selectedTask.type === "success" ? (
         <section className="flex flex-col gap-1.5 w-full overflow-hidden">
           {/* <SectionCaption>Code Execution Result</SectionCaption> */}
           <p className="text-sm text-muted-foreground mb-1.5">
