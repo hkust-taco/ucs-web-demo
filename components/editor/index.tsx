@@ -69,15 +69,17 @@ export function EditorPanelContent({ onRun }: EditorPanelContentProps) {
   );
 }
 
-const code = `abstract class Option[T]
+const code = `// A simple definition of optional values.
+abstract class Option[T]
 class Some[T](value: T) extends Option[T]
 module None extends Option[nothing]
 class Pair[A, B](x: A, y: B)
 
-let some = (x) => Some(x)
-let none = None
-
 fun getOrElse(x, default) = if x is
   Some(value) then value
   None then default
+
+getOrElse(None, 42) // => 42
+getOrElse(Some(42), 0) // => 42
+getOrElse(Some("Hello, world!"), "Goodbye!") // => "Hello, world!"
 `;
