@@ -35,6 +35,7 @@ const config = {
           "JetBrains Mono",
           ...defaultTheme.fontFamily.mono,
         ],
+        sans: ["\"Inter Variable\"", "Inter", ...defaultTheme.fontFamily.sans],
       },
       colors: {
         border: "hsl(var(--border))",
