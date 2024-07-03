@@ -28,18 +28,11 @@ export type Example = z.output<typeof ExampleSchema>;
 
 export const advancedExamples: Example[] = [
   {
-    id: "json",
-    group: "Real-World Examples",
-    name: "JSON Parser",
-    description: "A full-fledged JSON parser.",
-    source: json,
-    builtin: true,
-  },
-  {
     id: "bst",
     group: "Real-World Examples",
     name: "Binary Search Tree",
-    description: "A binary search tree implementation.",
+    description:
+      "A binary search tree implementation including search, insertion, and removal",
     source: binarySearchTree,
     builtin: true,
     location: "Fig. 15 in Appendix A",
@@ -48,16 +41,27 @@ export const advancedExamples: Example[] = [
     id: "calc",
     group: "Real-World Examples",
     name: "Calculator",
-    description: "A calculator of arithmetic expressions",
+    description:
+      "A calculator of arithmetic expressions supporting +, -, *, /, and parentheses.",
     source: calculator,
     builtin: true,
     location: "Fig. 15 in Appendix A",
   },
   {
+    id: "json",
+    group: "Real-World Examples",
+    name: "JSON Parser",
+    description:
+      "A full-fledged standard-compatible JSON parser with some real-world tests in the end.",
+    source: json,
+    builtin: true,
+  },
+  {
     id: "lisp",
     group: "Real-World Examples",
     name: "Lisp Interpreter",
-    description: "A simple Lisp interpreter.",
+    description:
+      "A simple Lisp interpreter supporting `val`, `cons`, `quote`, car`, `cdr`, and `def`.",
     source: lispInterpreter,
     builtin: true,
   },
@@ -71,7 +75,7 @@ export const basicExamples: Example[] = [
     description: "This example shows the power of operator splits in UCS.",
     source: variousSplits,
     builtin: true,
-    location: "Chapter 1",
+    location: "Section 1",
   },
   {
     id: "various-splits-2",
@@ -81,7 +85,25 @@ export const basicExamples: Example[] = [
       "This example shows how to implement nested pattern matching with UCS.",
     source: split2,
     builtin: true,
-    location: "Chapter 1",
+    location: "Section 1",
+  },
+  {
+    id: "zip-with",
+    group: "List",
+    name: "zipWith",
+    description: "An implementation of `zipWith` function on lists.",
+    source: zipWith,
+    builtin: true,
+    location: "Section 2",
+  },
+  {
+    id: "sign",
+    group: "General",
+    name: "sign",
+    description: "Determine the sign of a number with operator splits of UCS.",
+    source: sign,
+    builtin: true,
+    location: "Section 3.1.5",
   },
   {
     id: "pair-options",
@@ -91,15 +113,6 @@ export const basicExamples: Example[] = [
     source: ch33PairOptions,
     builtin: true,
     location: "Fig. 5 in Section 3.3",
-  },
-  {
-    id: "guards",
-    group: "General",
-    name: "Simple pattern guards",
-    description:
-      "This example shows how UCS can easily achieve pattern matching guards.",
-    source: guards,
-    builtin: true,
   },
   {
     id: "view-pattern",
@@ -122,14 +135,6 @@ export const basicExamples: Example[] = [
     location: "Section 5.1",
   },
   {
-    id: "sign",
-    group: "General",
-    name: "sign",
-    description: "Determine the sign of a number with operator splits of UCS.",
-    source: sign,
-    builtin: true,
-  },
-  {
     id: "find-first",
     group: "List",
     name: "findFirst",
@@ -148,11 +153,12 @@ export const basicExamples: Example[] = [
     location: "Fig. 15 in Appendix A",
   },
   {
-    id: "zip-with",
-    group: "List",
-    name: "zipWith",
-    description: "An implementation of `zipWith` function on lists.",
-    source: zipWith,
+    id: "guards",
+    group: "General",
+    name: "Simple pattern guards",
+    description:
+      "This example shows how UCS can easily achieve pattern matching guards.",
+    source: guards,
     builtin: true,
   },
 ];

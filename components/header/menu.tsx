@@ -206,17 +206,17 @@ const ExampleItem = React.forwardRef<
               <Icon className="w-6 h-6 text-muted-foreground" />
             </div>
           )}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1.5 h-full pb-1.5">
             <div className="text-base font-medium leading-none">
               <span>{example.name}</span>
             </div>
             <p className="line-clamp-3 text-sm leading-snug text-muted-foreground">
               {example.description}
             </p>
-            <div className="self-end">
+            <div className="mt-auto self-end">
               {example.location === undefined ? null : (
                 <span className="text-xs font-semibold uppercase px-1 py-0.5 bg-muted text-muted-foreground rounded-sm">
-                  From {example.location}
+                  {example.location}
                 </span>
               )}
             </div>
