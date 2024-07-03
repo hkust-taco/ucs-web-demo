@@ -1,13 +1,15 @@
-class Pair[A, B](first: A, second: B)
+// Definition of `Pair`.
+class Pair[out A, out B](first: A, second: B)
 
-abstract class Either[out A, out B]
+// Definition of `Either`.
+abstract class Either[out A, out B]: (Left[A, B] | Right[A, B])
 class Left[out A, out B](value: A) extends Either[A, B]
 class Right[out A, out B](value: B) extends Either[A, B]
 
+// Definition of `List` and the cons operator.
 abstract class List[out T]: (Cons[T] | Nil)
 class Cons[out T](val head: T, val tail: List[T]) extends List[T]
 module Nil extends List[nothing]
-
 fun (::) cons(head, tail) = Cons(head, tail)
 
 fun mapPartition(f, xs) =
@@ -17,6 +19,9 @@ fun mapPartition(f, xs) =
       Left(v) then Pair(Cons(v, l), r)
       Right(v) then Pair(l, Cons(v, r))
 
-let xs = 1 :: -2 :: 3 :: -4 :: 5 :: -6 :: Nil
+// A list of positive and negative integers.
+let xs: List[Int] = 1 :: -2 :: 3 :: -4 :: 5 :: -6 :: Nil
 
+// This creates two lists, one of positive integers,
+// the other of negative integers
 mapPartition((x => if x > 0 then Right(x) else Left(x)), xs)

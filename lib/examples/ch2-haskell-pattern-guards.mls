@@ -1,0 +1,8 @@
+abstract class Expr
+class Lit(val value: Int) extends Expr
+class Add(val left: Expr, val right: Expr) extends Expr
+class Mul(val left: Expr, val right: Expr) extends Expr
+
+abstract class Map
+class MapCons(val key: )
+module Empty extends Map

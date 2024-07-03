@@ -1,6 +1,6 @@
-import { Report } from "@mlscript/ucs-demo-build";
+import { DiagnosticReportMessage, Report } from "@mlscript/ucs-demo-build";
 import { OctagonAlertIcon, OctagonXIcon, SkullIcon } from "lucide-react";
-import { useMemo } from "react";
+import { Fragment, useMemo } from "react";
 import { StackTraceDisplay } from "../StackTraceDisplay";
 
 export type ReportDisplayProps = { report: Report };
@@ -11,7 +11,7 @@ export function ReportDisplay({ report }: ReportDisplayProps) {
   // }, [report.])
   return (
     <div className="flex flex-col border border-rose-700 dark:border-rose-900 rounded-md overflow-hidden shadow bg-background">
-      <header className="px-2  py-1 bg-rose-700 dark:bg-rose-900 text-secondary dark:text-primary flex flex-row items-center">
+      <header className="px-2 py-1 bg-rose-700 dark:bg-rose-900 text-secondary dark:text-primary flex flex-row items-center">
         {report.kind === "fatal" ? (
           <SkullIcon className="w-4 h-4 mr-1" />
         ) : report.kind === "error" ? (
@@ -32,25 +32,72 @@ export function ReportDisplay({ report }: ReportDisplayProps) {
             <StackTraceDisplay stack={report.stack} />
           </>
         ) : (
-          report.messages.map((message, index) =>
-            message.kind === "text" ? (
-              <div key={index}>
-                <span>{message.content}</span>
-              </div>
-            ) : (
-              <div
-                className="flex flex-row items-center font-mono border border-border rounded-sm"
-                key={index}
-              >
-                <div className="text-muted-foreground border-r border-border pl-2 pr-1">
-                  {message.line}
-                </div>
-                <div className="pl-2">{message.content}</div>
-              </div>
-            )
-          )
+          <MessageListDisplay messages={report.messages} />
         )}
       </div>
     </div>
   );
+}
+
+type MessageListDisplayProps = { messages: DiagnosticReportMessage[] };
+
+function MessageListDisplay({ messages }: MessageListDisplayProps) {
+  const chunks = useMemo(() => makeChunks(messages), [messages]);
+  return (
+    <>
+      {chunks.map((chunk, index) => (
+        <Fragment key={index}>
+          {typeof chunk === "string" ? (
+            <div key={index}>
+              <span>{chunk}</span>
+            </div>
+          ) : (
+            chunk.map((line) => <CodeBlockLine key={line.line} {...line} />)
+          )}
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
+type CodeBlockLineProps = {
+  content: string;
+  line: number;
+  range: [number, number];
+};
+
+function CodeBlockLine({
+  line,
+  content,
+  range: [start, end],
+}: CodeBlockLineProps) {
+  return (
+    <div className="py-0.5 flex flex-row items-center font-mono border border-border rounded-sm">
+      <div className="text-muted-foreground border-r border-border pl-2 pr-1">
+        {line}
+      </div>
+      <div className="pl-2">
+        <span className="text-muted-foreground">{content.slice(0, start)}</span>
+        <span className="-mx-0.5 px-0.5 rounded-sm bg-muted">
+          {content.slice(start, end)}
+        </span>
+        <span className="text-muted-foreground">{content.slice(end)}</span>
+      </div>
+    </div>
+  );
+}
+
+type MessageChunk = string | CodeBlockLineProps[]; // string[] is a code block
+
+function makeChunks(messages: DiagnosticReportMessage[]) {
+  const chunks: MessageChunk[] = [];
+  for (const message of messages) {
+    const last = chunks[chunks.length - 1];
+    if (Array.isArray(last) && message.kind === "code") {
+      last.push(message);
+    } else {
+      chunks.push(message.kind === "code" ? [message] : message.content);
+    }
+  }
+  return chunks;
 }

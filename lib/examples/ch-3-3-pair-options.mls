@@ -1,0 +1,18 @@
+// Definition of `Pair`.
+class Pair[out A, out B](first: A, second: B)
+
+// Definition of `Option`.
+abstract class Option[out T]: (Some | None)
+class Some[out T](value: T) extends Option[T]
+module None extends Option[nothing]
+
+fun sum(x, y) = if Pair(x, y) is
+  Pair(Some(xv), Some(yv)) then Some(xv + yv)
+  Pair(Some(xv), None)     then Some(xv)
+  Pair(None,     Some(yv)) then Some(yv)
+  Pair(None,     None)     then None
+
+sum(None, None)
+sum(Some(1), None)
+sum(None, Some(2))
+sum(Some(21), Some(21))

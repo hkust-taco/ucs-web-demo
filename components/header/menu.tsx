@@ -17,7 +17,8 @@ import type { NavigationMenuProps } from "@radix-ui/react-navigation-menu";
 import { FishIcon } from "lucide-react";
 import { TutorialButton } from "./tutorial";
 import { useSetSelectedExample } from "@/lib/store/example";
-import { advancedExamples, basicExamples } from "@/lib/examples";
+import { Example, advancedExamples, basicExamples } from "@/lib/examples";
+import { exampleIconMap } from "./exampleIcons";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -105,11 +106,9 @@ export function Menu(props: MenuProps) {
               {basicExamples.map((example) => (
                 <ExampleItem
                   key={example.name}
-                  title={example.name}
+                  example={example}
                   onClick={() => setSelectedExample(example)}
-                >
-                  {example.description}
-                </ExampleItem>
+                />
               ))}
             </ul>
           </NavigationMenuContent>
@@ -121,11 +120,9 @@ export function Menu(props: MenuProps) {
               {advancedExamples.map((example) => (
                 <ExampleItem
                   key={example.name}
-                  title={example.name}
+                  example={example}
                   onClick={() => setSelectedExample(example)}
-                >
-                  {example.description}
-                </ExampleItem>
+                />
               ))}
             </ul>
           </NavigationMenuContent>
@@ -151,53 +148,76 @@ export function Menu(props: MenuProps) {
   );
 }
 
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-});
+type ListItemProps = React.ComponentPropsWithoutRef<"a"> & {
+  icon?: React.ReactNode;
+};
+
+const ListItem = React.forwardRef<React.ElementRef<"a">, ListItemProps>(
+  ({ className, title, children, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <a
+            ref={ref}
+            className={cn(
+              "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+              className
+            )}
+            {...props}
+          >
+            <div className="text-sm font-medium leading-none">{title}</div>
+            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+              {children}
+            </p>
+          </a>
+        </NavigationMenuLink>
+      </li>
+    );
+  }
+);
 ListItem.displayName = "ListItem";
 
+type ExampleItemProps = React.ComponentPropsWithoutRef<"button"> & {
+  example: Example;
+};
 const ExampleItem = React.forwardRef<
   React.ElementRef<"button">,
-  React.ComponentPropsWithoutRef<"button">
->(({ className, title, children, ...props }, ref) => {
+  ExampleItemProps
+>(({ className, example, ...props }, ref) => {
+  const Icon = exampleIconMap.get(example.id);
   return (
     <li>
-      <NavigationMenuLink asChild>
+      <NavigationMenuItem asChild>
         <button
           ref={ref}
           className={cn(
-            "block w-full text-left select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            "border border-border border-dashed flex flex-row gap-2 w-full h-full text-left select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
             className
           )}
           {...props}
         >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
+          {Icon === undefined ? null : (
+            <div className="w-6 h-6">
+              <Icon className="w-6 h-6 text-muted-foreground" />
+            </div>
+          )}
+          <div className="flex flex-col gap-1.5">
+            <div className="text-base font-medium leading-none">
+              <span>{example.name}</span>
+            </div>
+            <p className="line-clamp-3 text-sm leading-snug text-muted-foreground">
+              {example.description}
+            </p>
+            <div className="self-end">
+              {example.location === undefined ? null : (
+                <span className="text-xs font-semibold uppercase px-1 py-0.5 bg-muted text-muted-foreground rounded-sm">
+                  From {example.location}
+                </span>
+              )}
+            </div>
+          </div>
         </button>
-      </NavigationMenuLink>
+      </NavigationMenuItem>
     </li>
   );
 });

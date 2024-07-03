@@ -1,0 +1,48 @@
+// Definition of `Option`.
+abstract class Option[out T]: (Some | None)
+class Some[out T](value: T) extends Option[T]
+module None extends Option[nothing]
+
+// Definition of `Either`.
+abstract class Either[out A, out B]: (Left[A, B] | Right[A, B])
+class Left[out A, out B](value: A) extends Either[A, B]
+class Right[out A, out B](value: B) extends Either[A, B]
+
+abstract class Value
+class IntVal(value: Int) extends Value
+class BoolVal(value: Bool) extends Value
+
+abstract class Expr
+class Var(val name: Str) extends Expr
+class Lit(value: Value) extends Expr
+class Lam(name: Var, body: Expr) extends Expr
+class App(callee: Expr, argument: Expr) extends Expr
+
+// A simple implementation of variable contexts.
+abstract class Context {
+  fun get: Str -> Option[Value]
+}
+module Empty extends Context {
+  fun get(name) = None
+}
+class Bind(val name: Var, value: Value, parent: Context) extends Context {
+  fun get(name) = if name === this.name.name then Some(value) else parent.get(name)
+}
+
+// The example in Fig. 11 of the paper.
+fun getValue(e, context) = if e is
+  Var(x) and context.get(x) is
+    Some(IntVal(v))  then Left(v)
+    Some(BoolVal(v)) then Right(v)
+  Lit(IntVal(v)) then Left(v)
+  Lit(BoolVal(v)) then Right(v)
+  else error
+
+// Enumerate different cases.
+getValue(Lit(IntVal(0)), Empty)
+getValue(Lit(BoolVal(true)), Empty)
+getValue(Var("x"), Bind(Var("x"), IntVal(42), Empty))
+getValue(Var("x"), Bind(Var("x"), BoolVal(false), Empty))
+
+// This will crash the runtime:
+// getValue(Var("y"), Empty)

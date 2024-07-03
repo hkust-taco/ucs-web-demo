@@ -1,0 +1,25 @@
+// Definition of `Option`.
+abstract class Option[out T]: (Some | None)
+class Some[out T](value: T) extends Option[T]
+module None extends Option[nothing]
+
+fun np(k)(n) = if k <= n then Some(n - k) else None
+
+fun fib(n) = if n is
+  0 then 1
+  1 then 1
+  m and np(2)(m) is
+    Some(n') then fib(n' + 1) + fib(n')
+    None then error
+
+fib(0)
+fib(1)
+fib(2)
+fib(3)
+fib(4)
+fib(5)
+fib(6)
+fib(7)
+fib(8)
+fib(9)
+fib(10)

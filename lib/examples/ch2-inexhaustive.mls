@@ -1,0 +1,5 @@
+// The following UCS expression is not exhaustive.
+// Please look at the diagnostic information on the right.
+fun example(x) = if x is
+  [0, 0] then true
+  [1, 1] then false
