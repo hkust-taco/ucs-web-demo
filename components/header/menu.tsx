@@ -14,11 +14,13 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import type { NavigationMenuProps } from "@radix-ui/react-navigation-menu";
-import { FishIcon } from "lucide-react";
+import { BookOpenTextIcon, FishIcon } from "lucide-react";
 import { TutorialButton } from "./tutorial";
 import { useSetSelectedExample } from "@/lib/store/example";
 import { Example, advancedExamples, basicExamples } from "@/lib/examples";
 import { exampleIconMap } from "./exampleIcons";
+import { Separator } from "../ui/separator";
+import { LanguageTutorial } from "@/lib/tutorials/LanguageTutorial";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -127,12 +129,15 @@ export function Menu(props: MenuProps) {
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
+        <Separator className="h-8" orientation="vertical" />
         <NavigationMenuItem>
-          <Link href="/docs" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              MLscript Tutorial
-            </NavigationMenuLink>
-          </Link>
+          <LanguageTutorial
+            className={cn(
+              "select-none rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+              navigationMenuTriggerStyle()
+            )}
+            variant="link"
+          />
         </NavigationMenuItem>
         <NavigationMenuItem>
           <TutorialButton
