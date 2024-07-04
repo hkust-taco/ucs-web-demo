@@ -9,7 +9,6 @@ import {
   newline,
   newlineBeforeElse,
 } from "./mlscript.grammar.terms";
-import chalk from "chalk";
 
 const log =
   process.env.VITEST === "true" ? console.log.bind(console) : () => {};
@@ -33,11 +32,7 @@ export const trackIndent = new ContextTracker({
       log(`• Found dedent`);
       return context.parent!;
     } else {
-      log(
-        `• Term ` +
-          chalk.redBright(`\`${stack.parser.getName(term)}\``) +
-          ` was shifted`
-      );
+      log(`• Term ` + `\`${stack.parser.getName(term)}\`` + ` was shifted`);
       return context;
     }
   },
