@@ -1,9 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 
-import { cn } from "@/lib/utils/cn";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -13,14 +11,14 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import type { NavigationMenuProps } from "@radix-ui/react-navigation-menu";
-import { BookOpenTextIcon, FishIcon } from "lucide-react";
-import { TutorialButton } from "./tutorial";
-import { useSetSelectedExample } from "@/lib/store/example";
 import { Example, advancedExamples, basicExamples } from "@/lib/examples";
-import { exampleIconMap } from "./exampleIcons";
-import { Separator } from "../ui/separator";
+import { useSetSelectedExample } from "@/lib/store/example";
 import { LanguageTutorial } from "@/lib/tutorials/LanguageTutorial";
+import { cn } from "@/lib/utils/cn";
+import type { NavigationMenuProps } from "@radix-ui/react-navigation-menu";
+import { Separator } from "../ui/separator";
+import { exampleIconMap } from "./exampleIcons";
+import { TutorialButton } from "./tutorial";
 
 const components: { title: string; href: string; description: string }[] = [
   {

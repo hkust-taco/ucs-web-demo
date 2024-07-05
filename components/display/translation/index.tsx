@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Source } from "@/lib/source";
+import { Source } from "@/lib/utils/source";
 import { type Compilation } from "@mlscript/ucs-demo-build";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { nanoid } from "nanoid";

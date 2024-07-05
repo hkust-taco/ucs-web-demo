@@ -1,4 +1,4 @@
-import { atomWithLocalStorage } from "@/lib/atom";
+import { atomWithLocalStorage } from "@/lib/store/atom";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useMemo } from "react";
 import { z } from "zod";
