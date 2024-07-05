@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Web Demo for Ultimate Conditional Syntax
 
-## Getting Started
+This project is a part of the paper _The Ultimate Conditional Syntax_ for 
+OOPSLA 2024 Artifact Evaluation.
 
-First, run the development server:
+## Project Structure
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This project follows the structure of a modern web frontend project. According to their functions, they can be classified as follows.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- UI components: `components/**/*`.
+- Configurations for the build tool: `vite.config.js`.
+- Type annotations: `@types/*.d.ts`, `vite-env.d.ts`.
+- Container: `Dockerfile`, `.dockerignore`.
+- Editor-related configurations: `.vscode/*`.
+- HTML template: `index.html`.
+- Tailwind CSS configurations: `tailwind.config.ts`, `postcss.config.js`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The main code that makes up the web demo is in the `lib` folder. The purpose of the file inside is as follows.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- `lib/codemirror`: Themes for CodeMirror.
+- `lib/examples`: The source of code examples.
+- `lib/mlscript`: MLscript language support for CodeMirror.
+- `lib/store`: Each file represents a store of states used throughout React components.
+- `lib/tutorials`: The source of tutorials for MLscript.
+- `lib/utils`: Some utility functions.
 
-## Learn More
+## External Dependencies
 
-To learn more about Next.js, take a look at the following resources:
+This project uses the following external dependencies, which are used only for creating the web demo. The core algorithms of the artifact and the paper are not implemented by these external dependencies.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [React][react]: Build web interfaces in a functional way and provide the management of state and effects.
+- [Vite][vite]: The build tool and development server.
+- [CodeMirror][codemirror]: An extensible code editor component.
+- [Lezer][lezer]: A incremental parser framework used by [CodeMirror][codemirror].
+- [jotai][jotai]: Advanced state management for React.
+- [Tailwind CSS][tailwindcss]: The CSS framework.
+- [Zod][zod]: Type validation for JavaScript values.
+- [Radix UI][radix-ui]: A collection of UI components.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+The remaining dependencies are purely utility, such as `nanoid`, `pluralize`, etc. These will not be elaborated here. People can check the `package.json` file to see all dependencies.
 
-## Deploy on Vercel
+Apart from the libraries mentioned above, there are also some resource dependencies.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Fonts: [Inter][inter] and [JetBrains Mono][jetbrains-mono].
+- Icons used in this project are provided by library [Lucide][lucide] and [Tabler Icons][tabler-icons].
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[react]: https://react.dev
+[vite]: https://vitejs.dev
+[codemirror]: https://codemirror.net
+[lezer]: https://lezer.codemirror.net
+[jotai]: https://jotai.org
+[tailwindcss]: https://tailwindcss.com
+[zod]: https://zod.dev
+[radix-ui]: https://www.radix-ui.com
+[inter]: https://rsms.me/inter/
+[jetbrains-mono]: https://www.jetbrains.com/lp/mono/
+[lucide]: https://lucide.dev
+[tabler-icons]: https://tablericons.com

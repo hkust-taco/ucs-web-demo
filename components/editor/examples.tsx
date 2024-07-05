@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Example } from "@/lib/examples";
 import { useAllExamples, useExampleGroups } from "@/lib/examples/hooks";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import { Control } from "react-hook-form";
 import { z } from "zod";
 import { Label } from "../ui/label";

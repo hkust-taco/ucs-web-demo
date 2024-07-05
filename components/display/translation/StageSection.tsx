@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import { ReactNode } from "react";
 
 export type StageSectionProps = {

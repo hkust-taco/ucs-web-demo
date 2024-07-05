@@ -4,7 +4,7 @@ import { Report } from "@mlscript/ucs-demo-build";
 import { ThumbsUpIcon } from "lucide-react";
 import { SectionCaption } from "../SectionCaption";
 import { ReportDisplay } from "./ReportDisplay";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import { ReactNode } from "react";
 import EmptyContent from "../EmptyContent";
 

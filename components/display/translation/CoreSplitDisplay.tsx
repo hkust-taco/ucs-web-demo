@@ -1,4 +1,4 @@
-import { splitLength } from "@/lib/splitUtils";
+import { splitLength } from "@/lib/utils/splitUtils";
 import { CoreBranch, CorePattern, CoreSplit } from "@mlscript/ucs-demo-build";
 import { EllipsisIcon } from "lucide-react";
 import pluralize from "pluralize";
