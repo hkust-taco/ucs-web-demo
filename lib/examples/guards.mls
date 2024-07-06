@@ -1,8 +1,28 @@
-abstract class Option[T]
-class Some[T](value: T) extends Option[T]
+// We first define the filter function on `Option`s.
+
+abstract class Option[out T]
+class Some[out T](value: T) extends Option[T]
 module None extends Option[nothing]
 
-fun filter(x, p) =
-  if x is
-    Some(xv) and p(xv) then x
-    else None
+fun filterOption(x, p) = if x is
+  Some(xv) and p(xv) then x
+  else None
+
+filterOption(None, _ => true)
+filterOption(Some(42), _ => true)
+
+// Next, let's define a filter function on lists.
+
+abstract class List[out T]: (Cons[T] | Nil)
+class Cons[out T](val head: T, val tail: List[T]) extends List[T]
+module Nil extends List[nothing]
+fun (::) cons(x, xs) = Cons(x, xs)
+
+fun even(x) = x % 2 === 0
+
+fun filterList(p, xs) = if xs is
+  Cons(x, xs') and p(x) then x :: filterList(p, xs')
+  Cons(_, xs') then filterList(p, xs')
+  Nil then Nil
+
+filterList(even, 1 :: 2 :: 3 :: 4 :: 5 :: Nil)
