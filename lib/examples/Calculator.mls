@@ -1,5 +1,9 @@
-// This test file explores implementing a calculator using UCS.
-
+//  ____              _             _
+// |  _ \  _ __  ___ | | _   _   __| |  ___
+// | |_) || '__|/ _ \| || | | | / _` | / _ \
+// |  __/ | |  |  __/| || |_| || (_| ||  __/
+// |_|    |_|   \___||_| \__,_| \__,_| \___|
+//
 fun (++) concatOp(a, b) = concat(a)(b)
 fun (|>) pipe(a, f) = f(a)
 fun (!==) notEqual(x, y) = not(x === y)
@@ -55,10 +59,10 @@ fun listJoin(sep) =
 fun showList(xs) = "[" ++ listJoin(", ")(xs) ++ "]"
 
 //  _
-// | |    _____  _____ _ __
-// | |   / _ \ \/ / _ \ '__|
-// | |__|  __/>  <  __/ |
-// |_____\___/_/\_\___|_|
+// | |     ___ __  __ ___  _ __
+// | |    / _ \\ \/ // _ \| '__|
+// | |___|  __/ >  <|  __/| |
+// |_____|\___|/_/\_\\___||_|
 // 
 
 fun isDigit(n) = (48 <= n) && (n <= 57)
@@ -94,8 +98,8 @@ skipBlank("  \t\n\r123" |> toStringOps, 0)
 class Span(val start: Int, val end: Int)
 
 abstract class Token(val span: Span)
-class IntegerLiteral(value: Int, span2: Span) extends Token(span2) { // It seems that constructor parameters is not sanitized
-  fun toString(): Str = "IntegerLiteral(" ++ anyToString(value) ++ ")"
+class IntLit(value: Int, span2: Span) extends Token(span2) { // It seems that constructor parameters is not sanitized
+  fun toString(): Str = "IntLit(" ++ anyToString(value) ++ ")"
 }
 class LeftParen(at: Int) extends Token(Span(at, at + 1)) {
   fun toString(): Str = "LeftParen"
@@ -103,8 +107,8 @@ class LeftParen(at: Int) extends Token(Span(at, at + 1)) {
 class RightParen(at: Int) extends Token(Span(at, at + 1)) {
   fun toString(): Str = "RightParen"
 }
-class BinaryOperator(value: Str, val bp: Int, at: Int) extends Token(Span(at, at + 1)) {
-  fun toString(): Str = "BinaryOperator(" ++ value ++ ", " ++ anyToString(bp) ++ ")"
+class BinOp(value: Str, val bp: Int, at: Int) extends Token(Span(at, at + 1)) {
+  fun toString(): Str = "BinOp(" ++ value ++ ", " ++ anyToString(bp) ++ ")"
 }
 class EndOfInput(at: Int) extends Token(Span(at, at)) {
   fun toString(): Str = "EndOfInput"
@@ -119,16 +123,16 @@ fun scanToken(text: StringOps, at: Int): [Token, Int] =
     at' >= text.length then [EndOfInput(at'), at']
     let head = text.charCodeAt(at')
     head ===
-      37 then [BinaryOperator("%", 20, at'), at' + 1]
+      37 then [BinOp("%", 20, at'), at' + 1]
       40 then [LeftParen(at'), at' + 1]
       41 then [RightParen(at'), at' + 1]
-      42 then [BinaryOperator("*", 20, at'), at' + 1]
-      43 then [BinaryOperator("+", 10, at'), at' + 1]
-      45 then [BinaryOperator("-", 10, at'), at' + 1]
-      47 then [BinaryOperator("/", 20, at'), at' + 1]
+      42 then [BinOp("*", 20, at'), at' + 1]
+      43 then [BinOp("+", 10, at'), at' + 1]
+      45 then [BinOp("-", 10, at'), at' + 1]
+      47 then [BinOp("/", 20, at'), at' + 1]
     (48 <= head) && (head <= 57) and
       scanInt(text, at') is Some([n, at'']) then
-        [IntegerLiteral(n, Span(at', at'')), at'']
+        [IntLit(n, Span(at', at'')), at'']
     else [UnknownInput(text.slice(at'), at', text.length - at'), at']
 
 scanToken("bruh" |> toStringOps, 0)
@@ -156,30 +160,28 @@ tokenize("bruh") |> showList
 // |_|   \__,_|_|  |___/_|_| |_|\__, |
 //                              |___/
 
-type Expression = IntegerLiteral | BinaryExpression
-class BinaryExpression(op: BinaryOperator, left: Expression, right: Expression)
+type Expr = IntLit | Binary
+class Binary(op: BinOp, left: Expr, right: Expr)
 
-fun bindingPower(t: Expression): Int =
-  if t is
-    IntegerLiteral then 30
-    BinaryExpression(op, _, _) then op.bp
+fun precedence(t: Expr): Int = if t is
+  IntLit then 30
+  Binary(op, _, _) then op.bp
 
-fun showExpression(t: Expression): Str =
-  if t is
-    IntegerLiteral(n) then anyToString(n)
-    BinaryExpression(BinaryOperator(op, bp), left, right) then
-      let lbp = bindingPower of left
-      let rbp = bindingPower of right
-      par(showExpression(left), lbp < bp) ++ " " ++ op ++ " " ++ par(showExpression(right), rbp < bp)
+fun showExpr(t: Expr): Str = if t is
+  IntLit(n) then anyToString(n)
+  Binary(BinOp(op, bp), left, right) then
+    let lbp = precedence of left
+    let rbp = precedence of right
+    par(showExpr(left), lbp < bp) ++ " " ++ op ++ " " ++ par(showExpr(right), rbp < bp)
 
 let s = Span(0, 0)
-IntegerLiteral(42, s) |> showExpression
-let t1 = BinaryExpression(BinaryOperator("+", 10, 0), IntegerLiteral(1, s), IntegerLiteral(2, s))
-t1 |> showExpression
-let t2 = BinaryExpression(BinaryOperator("*", 20, 0), t1, IntegerLiteral(3, s))
-t2 |> showExpression
-let t3 = BinaryExpression(BinaryOperator("*", 20, 0), t2, IntegerLiteral(4, s))
-t3 |> showExpression
+IntLit(42, s) |> showExpr
+let t1 = Binary(BinOp("+", 10, 0), IntLit(1, s), IntLit(2, s))
+t1 |> showExpr
+let t2 = Binary(BinOp("*", 20, 0), t1, IntLit(3, s))
+t2 |> showExpr
+let t3 = Binary(BinOp("*", 20, 0), t2, IntLit(4, s))
+t3 |> showExpr
 
 type ParseResult[A] = Some[A] | Failed
 class Failed(message: Str)
@@ -190,52 +192,53 @@ fun (?>) mapParseResult(x, f) = if x is
   Some(value) then Some(f(value))
   failed then failed
 
-fun showParsedExpression(r: ParseResult[Expression]) = if r is
-  Some(value) then "Some(" ++ showExpression(value) ++ ")"
+fun showParsedExpr(r: ParseResult[Expr]) = if r is
+  Some(value) then "Some(" ++ showExpr(value) ++ ")"
   Failed(message) then "Failed(" ++ message ++ ")"
 
-fun lastPosition(t: Expression): Int =
-  if t is
-    IntegerLiteral(_, span) then span.end
-    BinaryExpression(_, _, right) then lastPosition(right)
+fun lastPosition(t: Expr): Int = if t is
+  IntLit(_, span) then span.end
+  Binary(_, _, right) then lastPosition of right
 
-fun parseAtom(ts: List[Token]): ParseResult[[Expression, List[Token]]] =
+fun parseAtom(ts: List[Token]): ParseResult[[Expr, List[Token]]] =
   if ts is
-    Cons(IntegerLiteral(n, span), ts') then Some([IntegerLiteral(n, span), ts'])
-    Cons(LeftParen, ts') and parseExpression(0, ts') is
+    Cons(IntLit(n, span), ts') then Some([IntLit(n, span), ts'])
+    Cons(LeftParen, ts') and parseExpr(0, ts') is
       Some([body, Cons(RightParen, ts'')]) then Some([body, ts''])
       Some([body, _]) then Failed("Expected a right parenthesis at " ++ toString(lastPosition of body))
       failed then failed
     Cons(token, _) then Failed("Unexpected token " ++ toString(token) ++ " at " ++ toString(token.span.start))
     Nil then Failed("Unexpected end of input")
-fun parseExpression(bp: Int, ts: List[Token]): ParseResult[[Expression, List[Token]]] =
+
+fun parseExpr(bp: Int, ts: List[Token]): ParseResult[[Expr, List[Token]]] =
   if parseAtom(ts) is
     Some([leftmost, ts']) then
       let rec aux(left, ts) = if ts is
-        Cons(BinaryOperator(op, bp', opAt), ts') and bp < bp' and
-          parseExpression(bp', ts') is
+        Cons(BinOp(op, bp', opAt), ts') and bp < bp' and
+          parseExpr(bp', ts') is
             Some([right, ts'']) then
-              aux(BinaryExpression(BinaryOperator(op, bp', opAt), left, right), ts'')
+              aux(Binary(BinOp(op, bp', opAt), left, right), ts'')
             failed then failed
         else Some([left, ts])
       aux(leftmost, ts')
     failed then failed
-fun parse(source: Str): ParseResult[Expression] =
-  if parseExpression(0, tokenize(source)) is
+
+fun parse(source: Str): ParseResult[Expr] =
+  if parseExpr(0, tokenize(source)) is
     Some([expr, Nil]) then Some(expr)
     Some([expr, rest]) then Failed("Unexpected token: " ++ showList(rest) ++ " at " ++ toString(lastPosition of expr))
     failed then failed
 
-parse("1 + 2 * 3") |> showParsedExpression
-parse("(1 + 2) * 3") |> showParsedExpression
-parse("2 * (1 + 3 + 5 + 7 + 9 + 11) - 2 - 4 - 6") |> showParsedExpression
-parse("2 * (1 + 3) * (5 + 7) * (9 - 11)") |> showParsedExpression
-parse("(((((((((42)))))))))") |> showParsedExpression
+parse("1 + 2 * 3") |> showParsedExpr
+parse("(1 + 2) * 3") |> showParsedExpr
+parse("2 * (1 + 3 + 5 + 7 + 9 + 11) - 2 - 4 - 6") |> showParsedExpr
+parse("2 * (1 + 3) * (5 + 7) * (9 - 11)") |> showParsedExpr
+parse("(((((((((42)))))))))") |> showParsedExpr
 
-parse("1 + ") |> showParsedExpression
-parse("1 bruh") |> showParsedExpression
-parse("1 * (2 + 3") |> showParsedExpression
-parse("1 - bruh") |> showParsedExpression
+parse("1 + ") |> showParsedExpr
+parse("1 bruh") |> showParsedExpr
+parse("1 * (2 + 3") |> showParsedExpr
+parse("1 - bruh") |> showParsedExpr
 
 //  _____            _             _   _
 // | ____|_   ____ _| |_   _  __ _| |_(_) ___  _ __
@@ -244,10 +247,10 @@ parse("1 - bruh") |> showParsedExpression
 // |_____| \_/ \__,_|_|\__,_|\__,_|\__|_|\___/|_| |_|
 //
 
-fun evaluate(t: Expression): Option[Int] =
+fun evaluate(t: Expr): Option[Int] =
   if t is
-    IntegerLiteral(n) then Some(n)
-    BinaryExpression(BinaryOperator(op, _, _), left, right) and
+    IntLit(n) then Some(n)
+    Binary(BinOp(op, _, _), left, right) and
       evaluate(left) is Some(leftResult) and
         evaluate(right) is Some(rightResult) and op ===
           "+" then Some(leftResult + rightResult)
@@ -257,15 +260,15 @@ fun evaluate(t: Expression): Option[Int] =
           "%" then Some(leftResult % rightResult)
     else None
 
-fun evaluation(source: Str): Str =
+fun showEvaluation(source: Str): Str =
   if parse(source) is
-    Some(expression) and evaluate(expression) is
+    Some(expr) and evaluate(expr) is
       Some(result) then toString(result)
       None then "Evaluation failed"
     Failed(message) then "Parsing failed: " ++ message
 
-evaluation("1 + 2 * 3")
-evaluation("(((((42)))))")
-evaluation("1 * (3 + 4) - 5")
-evaluation("1 + ")
-evaluation("1 bruh")
+showEvaluation of "1 + 2 * 3"
+showEvaluation of "(((((42)))))"
+showEvaluation of "1 * (3 + 4) - 5"
+showEvaluation of "1 + "
+showEvaluation of "1 bruh"
