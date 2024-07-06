@@ -1,7 +1,7 @@
 import fs from "fs";
 
 // Use the published version of the npm package when running on Cloudflare.
-if (typeof process.env.CLOUDFLARE !== "undefined") {
+if (typeof process.env.USE_PUBLISHED_BUILD !== "undefined") {
   console.log("Using published version of npm package.");
   const original = fs.readFileSync("package.json", "utf8");
   console.log("Current package.json: ", original);

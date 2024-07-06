@@ -27,7 +27,7 @@
     "@mdx-js/loader": "^3.0.1",
     "@mdx-js/react": "^3.0.1",
     "@mdx-js/rollup": "^3.0.1",
-    "@mlscript/ucs-demo-build": "file:../npm/dist",
+    "@mlscript/ucs-demo-build": "^0.0.1-alpha.21",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-icons": "^1.3.0",
