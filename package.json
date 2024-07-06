@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "tsc -b && vite build",
-    "build:cloudflare": "node scripts/fix.js && tsc -b && vite build",
+    "fix:cloudflare": "node scripts/fix.js",
     "preview": "vite preview"
   },
   "dependencies": {
