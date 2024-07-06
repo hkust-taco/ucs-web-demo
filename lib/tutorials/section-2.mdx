@@ -1,0 +1,22 @@
+import CodeBlock from "./CodeBlock";
+
+We first introduce expressions in MLscript.
+MLscript has a set of common primitive values.
+
+<CodeBlock source={`0 // Integers
+3.14159 // Real numbers
+true // Boolean
+"this is a string" // String
+[true, false] // Tuples`} />
+
+Those primitive values supports common operations.
+
+<CodeBlock source={`1 + 2 // 3
+1 + 2 * 3 - 4 // 3
+"hello" === "world" // false`} />
+
+Expressions can be bound to variables via `let` declarations.
+
+<CodeBlock source={`let x = 1
+let y = 2
+let z = x + y // 3`} />

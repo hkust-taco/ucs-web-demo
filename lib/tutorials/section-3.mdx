@@ -1,0 +1,20 @@
+import CodeBlock from "./CodeBlock";
+
+Functions can be defined by `fun` keyword.
+Parameters need to be enclosed in parentheses.
+
+<CodeBlock source={`fun id(x) = x
+id("hello") // "hello"
+fun sum(x, y) = x + y
+sum(40, 2) // 42`} />
+
+Lambda functions are also supported.
+
+<CodeBlock source={`x => x
+(x, y) => x + y`} />
+
+The types of functions are automatically inferred.
+But you can also specify the types explicitly.
+Type parameters are enclosed in square brackets.
+
+<CodeBlock source={`fun id[A](x: A): A = x`} />

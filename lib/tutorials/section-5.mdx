@@ -1,0 +1,15 @@
+import CodeBlock from "./CodeBlock";
+
+Classes can be extended with `extends` keyword.
+Here is the definition of `Option` type in MLscript,
+which is very common in provided examples.
+
+<CodeBlock source={`abstract class Option[out T]: (Some | None)
+class Some[out T](value: T) extends Option[T]
+module None extends Option[nothing]`} />
+
+- Class `Option` is abstract and has two sub-classes, `Some` and `None`.
+- The `: (Some | None)` clause indicates that `Option` only has two possible sub-classes:
+  `Some` and `None`.
+- The type parameter `T` is marked as `out` to indicate that it is covariant.
+- `module` keyword is used to define a singleton object.

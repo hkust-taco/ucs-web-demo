@@ -1,0 +1,21 @@
+import CodeBlock from "./CodeBlock";
+
+Similarly, we can define the `List` type.
+
+<CodeBlock source={`abstract class List[out T]: (Cons[T] | Nil)
+class Cons[out T](val head: T, val tail: List[T]) extends List[T]
+module Nil extends List[nothing]`} />
+
+We can define a list of three integers as follows.
+<CodeBlock source={`Cons(0, Cons(1, Cons(2, Nil)))`} />
+
+To construct lists just like in other functional languages,
+we can define the concatenation operator `::`.
+
+<CodeBlock source={`fun (::) cons(x, xs) = Cons(x, xs)`} />
+
+Then we can construct the same list as follows.
+
+<CodeBlock source={`0 :: 1 :: 2 :: Nil`} />
+
+The `List` type is a common data structure in examples.

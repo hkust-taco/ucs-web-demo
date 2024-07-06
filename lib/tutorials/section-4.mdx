@@ -1,0 +1,18 @@
+import CodeBlock from "./CodeBlock";
+
+We can define classes.
+For example, the following is a class definition for a simple `Point` class.
+It has two parameters `x` and `y` of type `Int`.
+
+<CodeBlock source={`class Point(x: Int, y: Int)`} />
+
+To make parameters accessible by property access `.`.
+We have to declare them with `val`.
+
+<CodeBlock source={`class Point(val x: Int, val y: Int)
+let origin = Point(0, 0)
+origin.x + origin.y // 0`} />
+
+We can also define classes with type parameters.
+
+<CodeBlock source={`class Pair[A, B](val first: A, val second: B)`} />

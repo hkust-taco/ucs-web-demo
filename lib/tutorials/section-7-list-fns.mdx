@@ -1,0 +1,16 @@
+import CodeBlock from "./CodeBlock";
+
+We can define many functions that operate on lists.
+For example, we can define a function that sum all elements in a list.
+
+<CodeBlock source={`fun sum(xs) = if xs is
+  Nil then 0
+  Cons(x, xs') then x + sum(xs')`} />
+
+You will find out that the `sum` function makes use of
+the Ultimate Conditional Syntax, which is the main contribution
+of our paper.
+
+Now, you can try out the examples provided in this web demo.
+We hope you can tweak the examples and learn more about MLscript.
+Have fun!
