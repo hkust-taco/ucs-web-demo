@@ -43,7 +43,7 @@ fun reverse(xs) =
       Nil then acc
       Cons(x, xs') then aux(x :: acc, xs')
   aux(Nil, xs)
-fun join(sep) =
+fun listJoin(sep) =
   let rec aux(acc, xs) =
     if xs is
       Nil then acc
@@ -52,7 +52,7 @@ fun join(sep) =
     if xs is
       Cons(x, xs') then aux(toString(x), xs')
       Nil then ""
-fun showList(xs) = "[" ++ join(", ")(xs) ++ "]"
+fun showList(xs) = "[" ++ listJoin(", ")(xs) ++ "]"
 
 //  _
 // | |    _____  _____ _ __

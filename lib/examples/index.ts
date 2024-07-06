@@ -47,15 +47,15 @@ export const advancedExamples: Example[] = [
     builtin: true,
     location: "Fig. 15 in Appendix A",
   },
-  {
-    id: "json",
-    group: "Real-World Examples",
-    name: "JSON Parser",
-    description:
-      "A full-fledged standard-compatible JSON parser with some real-world tests in the end.",
-    source: json,
-    builtin: true,
-  },
+  // {
+  //   id: "json",
+  //   group: "Real-World Examples",
+  //   name: "JSON Parser",
+  //   description:
+  //     "A full-fledged standard-compatible JSON parser with some real-world tests in the end.",
+  //   source: json,
+  //   builtin: true,
+  // },
   {
     id: "lisp",
     group: "Real-World Examples",
