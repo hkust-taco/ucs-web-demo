@@ -13,11 +13,11 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import EmptyContent from "../EmptyContent";
-import { SectionDescription } from "../SectionDescription";
 import { CoreSplitDisplay } from "./CoreSplitDisplay";
 import { NormalizedTermDisplay } from "./NormalizedTermDisplay";
 import { SourceCodeDisplay } from "./SourceCodeDisplay";
 import { SourceSplitDisplay } from "./SourceSplitDisplay";
+import { CoverageCheckingDisplay } from "./CoverageCheckingDisplay";
 
 export type TranslationContentProps = {
   sourceCode: string | null;
@@ -59,6 +59,7 @@ export function TranslationContent({
           desugared: translateResult.desugared,
           normalized: translateResult.normalized,
           postProcessed: translateResult.postProcessed,
+          coverageCheckingResults: translateResult.coverageCheckingResults,
         };
       }) ?? []
     ).sort((a, b) => {
@@ -210,6 +211,12 @@ export function TranslationContent({
                   <NormalizedTermDisplay
                     caption="Stage 3: Post-processing"
                     topLevelTerm={selectedTranslationResult.postProcessed}
+                  />
+                  <CoverageCheckingDisplay
+                    caption="Stage 4: Coverage Checking"
+                    diagnostics={
+                      selectedTranslationResult.coverageCheckingResults
+                    }
                   />
                 </>
               )}
