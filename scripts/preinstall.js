@@ -7,7 +7,7 @@ if (typeof process.env.USE_PUBLISHED_BUILD !== "undefined") {
   console.log("Current package.json: ", original);
   const pkg = original.replace(/"file:\.\.\/npm\/dist"/g, () => {
     console.log("Found the local npm package.");
-    return '"^0.0.1-alpha.20"';
+    return '"^0.0.1-alpha.22"';
   });
   fs.writeFileSync("package.json", pkg);
 }
